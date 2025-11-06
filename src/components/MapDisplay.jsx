@@ -12,7 +12,6 @@ import "@arcgis/map-components/components/arcgis-placement";
 import "@arcgis/map-components/components/arcgis-search";
 import "@arcgis/map-components/components/arcgis-compass";
 import {
-  accessRoadOptionsGroupLayer,
   alignmentLine,
   boundaryGroupLayer,
   depotBuildingsGroupLayer,
@@ -22,7 +21,6 @@ import {
   lotGroupLayer,
   lotLayer,
   stationLayer,
-  structureLayer,
   structuresGroupLayer,
 } from "../layers";
 import "@esri/calcite-components/dist/components/calcite-button";
@@ -44,6 +42,7 @@ function MapDisplay() {
       arcgisMap.map.add(handedOverLotLayer);
       arcgisMap.map.add(alignmentLine);
       arcgisMap.map.ground.navigationConstraint = "none";
+      arcgisMap.view.ui.components = [];
 
       arcgisSearch.sources = [
         {
