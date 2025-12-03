@@ -133,37 +133,15 @@ function ActionPanel() {
 
         <CalcitePanel heading="Description" data-panel-id="information" hidden>
           {nextWidget === "information" ? (
-            <div className="informationDiv">
-              <ul>
+            <div style={{ paddingLeft: "20px" }}>
+              This smart map shows the progress on land acquisition for
+              high-level operations onyly.
+              <div style={{ paddingLeft: "20px" }}>
                 <li>
-                  You can <b>filter the data</b> by City and Barangy using
-                  dropdown lists.
+                  The source of data: <b>Master List tables</b> provided by the
+                  RAP Team.
                 </li>
-                <li>
-                  <b>Click a tab</b> below the dropdown lists to view progress
-                  on land, structure, or NLO in charts.
-                </li>
-                <li>
-                  <b>Click series in pie charts</b> to view progress on the
-                  corresponding lots/structures/NLO on the map.
-                </li>
-                <li>
-                  <b>Lots under expropriation</b> are available in the 'Expro
-                  List' tab.
-                </li>
-                <li>
-                  <b>Lots with issues</b> are available in the 'IssueList' tab.
-                </li>
-                <br></br>
-                <br></br>
-                <b style={{ color: "white" }}>---:Defintion of Terms:---</b>
-                <li>
-                  <b>ROWUA</b> : Right of Way Usage Agreement
-                </li>
-                <li>
-                  <b>NVS</b> : Negotiated Voluntary Sale
-                </li>
-              </ul>
+              </div>
             </div>
           ) : (
             <div className="informationDiv" hidden></div>
