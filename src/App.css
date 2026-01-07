@@ -34,14 +34,6 @@ calcite-list-item {
   white-space: pre-line;
 }
 
-calcite-label {
-  --calcite-color-text-1: #9ca3af;
-  --calcite-font-size--1: 1.1rem;
-  /* margin-top: 1vh; */
-  margin-left: 15px;
-  margin-top: 5px;
-}
-
 calcite-action-bar {
   --calcite-color-border-3: #555555;
   --calcite-color-text-3: #bfbfbf;

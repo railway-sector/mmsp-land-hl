@@ -121,8 +121,9 @@ export async function generateLotNumber() {
   return lotLayer.queryFeatures(query).then((response: any) => {
     var stats = response.features[0].attributes;
     const totalLotNumber = stats.total_lot_number;
-    const totalLotPie = stats.total_lot_pie;
-    return [totalLotNumber, totalLotPie];
+    const totalPrivate = stats.total_lot_pie;
+    const totalPublic = totalLotNumber - totalPrivate;
+    return [totalLotNumber, totalPrivate, totalPublic];
   });
 }
 

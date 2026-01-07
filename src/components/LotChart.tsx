@@ -1,5 +1,5 @@
 import { use, useEffect, useRef, useState } from "react";
-import { handedOverLotLayer, lotLayer } from "../layers";
+import { handedOverLotLayer, lotLayer, publicLotLayer } from "../layers";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import Query from "@arcgis/core/rest/support/Query";
 import * as am5 from "@amcharts/amcharts5";
@@ -86,18 +86,22 @@ const LotChart = (backgcolorswitch: any) => {
   if (!contractp) {
     lotLayer.definitionExpression = "1=1";
     handedOverLotLayer.definitionExpression = "1=1";
+    publicLotLayer.definitionExpression = "1=1";
     // pteLotSubteLayer1.definitionExpression = '1=1';
   } else if (contractp && !landtype && !landsection) {
     lotLayer.definitionExpression = qCP;
     handedOverLotLayer.definitionExpression = qCP;
+    publicLotLayer.definitionExpression = qCP;
     // pteLotSubteLayer1.definitionExpression = qCP;
   } else if (contractp && landtype && !landsection) {
     lotLayer.definitionExpression = qCpLandType;
     handedOverLotLayer.definitionExpression = qCpLandType;
+    publicLotLayer.definitionExpression = qCpLandType;
     // pteLotSubteLayer1.definitionExpression = qCpLandType;
   } else {
     lotLayer.definitionExpression = qCpLandTypeSection;
     handedOverLotLayer.definitionExpression = qCpLandTypeSection;
+    publicLotLayer.definitionExpression = qCpLandTypeSection;
     // pteLotSubteLayer1.definitionExpression = qCpLandTypeSection;
   }
 
@@ -401,22 +405,95 @@ const LotChart = (backgcolorswitch: any) => {
           borderColor: "#555555",
         }}
       >
-        {/* Total Lot Number */}
-        <CalciteLabel style={{ marginTop: "17px" }}>TOTAL LOTS</CalciteLabel>
-        <CalciteLabel layout="inline">
-          <b className="totalLotsNumber">
-            {thousands_separators(lotNumber[1])}
+        <CalciteLabel>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "10px",
+            }}
+          >
+            {/* Total Lot Number */}
+            <div
+              style={{
+                color: "#d1d5db",
+                fontSize: "1.1vw",
+                paddingBottom: "20px",
+                paddingTop: "0.6vh",
+                margin: "auto",
+              }}
+            >
+              TOTAL LOTS
+              <div
+                style={{
+                  color: "#d1d5db",
+                  fontSize: "2rem",
+                  fontWeight: "bold",
+                  fontFamily: "calibri",
+                  marginLeft: "20%",
+                  paddingTop: "2vh",
+                }}
+              >
+                {thousands_separators(lotNumber[1])}
+                <div
+                  style={{
+                    color: "#d1d5db",
+                    justifyContent: "center",
+                    fontSize: "1.3vw",
+                    fontWeight: "normal",
+                    marginLeft: "10px",
+                    marginTop: "15px",
+                  }}
+                >
+                  ({thousands_separators(lotNumber[0])})
+                </div>
+              </div>
+            </div>
+
+            {/* Public Lot Number */}
+            <div
+              style={{
+                color: "#d1d5db",
+                fontSize: "1.1vw",
+                paddingBottom: "20px",
+                paddingTop: "0.6vh",
+                margin: "auto",
+              }}
+            >
+              PUBLIC LOTS
+              <div
+                style={{
+                  color: "#d1d5db",
+                  fontSize: "2rem",
+                  fontWeight: "bold",
+                  fontFamily: "calibri",
+                  paddingTop: "2vh",
+                  marginLeft: "20%",
+                }}
+              >
+                {thousands_separators(lotNumber[2])}
+                <div
+                  style={{
+                    color: "#d1d5db",
+                    justifyContent: "center",
+                    fontSize: "1.3vw",
+                    fontWeight: "normal",
+                    marginLeft: "10px",
+                    marginTop: "15px",
+                  }}
+                >
+                  <span style={{ color: "#ffffff00" }}>..</span>
+                </div>
+              </div>
+            </div>
             <img
               src="https://EijiGorilla.github.io/Symbols/Land_logo.png"
               alt="Land Logo"
-              height={"21%"}
-              width={"21%"}
-              style={{ marginLeft: "105%", display: "flex", marginTop: "-17%" }}
+              height={"45px"}
+              width={"45px"}
+              style={{ margin: "auto" }}
             />
-            <div className="totalLotsNumber2">
-              ({thousands_separators(lotNumber[0])})
-            </div>
-          </b>
+          </div>
         </CalciteLabel>
 
         {/* Lot Chart */}
@@ -426,13 +503,17 @@ const LotChart = (backgcolorswitch: any) => {
             height: "53vh",
             backgroundColor: "rgb(0,0,0,0)",
             color: "white",
-            marginTop: "5vh",
+            marginTop: "3vh",
             marginBottom: "10vh",
           }}
         ></div>
 
         {/* Handed-Over/PTE */}
-        <CalciteLabel>HANDED-OVER</CalciteLabel>
+        <CalciteLabel>
+          <span style={{ color: "#d1d5db", fontSize: "1.1vw" }}>
+            HANDED-OVER
+          </span>
+        </CalciteLabel>
         <CalciteLabel layout="inline">
           {handedOverNumber[0] === "Infinity" ? (
             <b className="handedOverNumber">

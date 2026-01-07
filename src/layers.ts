@@ -215,6 +215,56 @@ export const lotLayer = new FeatureLayer({
   },
 });
 
+/* Public Land */
+const publicLotRenderer = new SimpleRenderer({
+  symbol: new SimpleFillSymbol({
+    color: "#d8cdcdff",
+    style: "diagonal-cross",
+    outline: {
+      width: 1,
+      color: "#d8cdcdff",
+    },
+  }),
+});
+
+export const publicLotLayer = new FeatureLayer({
+  portalItem: {
+    id: "0c172b82ddab44f2bb439542dd75e8ae",
+    portal: {
+      url: "https://gis.railway-sector.com/portal",
+    },
+  },
+  layerId: 8,
+  title: "Public Lot",
+  labelingInfo: [lotLabel],
+  renderer: publicLotRenderer,
+  definitionExpression: "StatusNVS3 IS NULL",
+  // popupEnabled: false,
+  popupTemplate: {
+    title: "<p>{Id}: Public Land</p>",
+    lastEditInfoEnabled: false,
+    returnGeometry: true,
+    content: [
+      {
+        type: "fields",
+        fieldInfos: [
+          {
+            fieldName: "OWNER",
+            label: "Land Owner",
+          },
+          {
+            fieldName: "Station1",
+          },
+          {
+            fieldName: "StatusNVS3",
+            label: "<p>Status of Land Acquisition</p>",
+          },
+        ],
+      },
+    ],
+  },
+});
+
 /* Lot boundary only */
 const lotLayerBoundaryRenderer = new SimpleRenderer({
   symbol: new SimpleFillSymbol({
@@ -635,8 +685,8 @@ export const creekDivLayer = new FeatureLayer({
 export const lotGroupLayer = new GroupLayer({
   title: "Land",
   visible: true,
-  visibilityMode: "exclusive",
-  layers: [pteLotSubteLayer, handedOverLotLayer, lotLayer],
+  visibilityMode: "independent",
+  layers: [pteLotSubteLayer, handedOverLotLayer, lotLayer, publicLotLayer],
 });
 
 export const evsBoundaryPoGroupLayer = new GroupLayer({
