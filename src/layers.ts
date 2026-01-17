@@ -216,15 +216,25 @@ export const lotLayer = new FeatureLayer({
 });
 
 /* Public Land */
-const publicLotRenderer = new SimpleRenderer({
-  symbol: new SimpleFillSymbol({
-    color: "#d8cdcdff",
-    style: "diagonal-cross",
-    outline: {
-      width: 1,
-      color: "#d8cdcdff",
+const publicLotRenderer = new UniqueValueRenderer({
+  valueExpression: "When($feature.StatusNVS3 > 0, 'withStatus', 'publicLands')",
+  uniqueValueInfos: [
+    {
+      value: "withStatus",
+      symbol: null,
     },
-  }),
+    {
+      value: "publicLands",
+      symbol: new SimpleFillSymbol({
+        color: "#d8cdcdff",
+        style: "diagonal-cross",
+        outline: {
+          width: 1,
+          color: "#d8cdcdff",
+        },
+      }),
+    },
+  ],
 });
 
 export const publicLotLayer = new FeatureLayer({
