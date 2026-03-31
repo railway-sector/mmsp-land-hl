@@ -1,1 +1,0 @@
-import{j6 as c,j7 as f,j8 as i,bb as u,j9 as l}from"./index-BRQvpsde.js";function o(n,a,t,e){if(c(n.spatialReference,t))return s[0]=n.x,s[1]=n.y,s[2]=n.z??0,f(s,n.spatialReference,0,a,t,0);const r=i(n,t,e);return!!r&&(a[0]=r.x,a[1]=r.y,a[2]=r.z??0,!0)}async function j(n,a,t,e){return await l(n.spatialReference,t,null,e),o(n,a,t)}const s=u();export{j as c,o as n};
