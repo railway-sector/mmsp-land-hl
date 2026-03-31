@@ -1,0 +1,31 @@
+{
+  "homepage": "https://railway-sector.github.io/mmsp-land-hl",
+  "name": "js-maps-sdk-react-template",
+  "description": "ArcGIS Maps SDK for JavaScript Vite React TSX template",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@arcgis/charts-components": "^5.0.0",
+    "@arcgis/core": "^5.0.0",
+    "@arcgis/map-components": "^5.0.0",
+    "@esri/calcite-components": "^5.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "~24.10.1",
+    "@types/react": "~19.2.2",
+    "@types/react-dom": "~19.2.2",
+    "@vitejs/plugin-react-swc": "^4.3.0",
+    "gh-pages": "^6.3.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.2"
+  }
+}
