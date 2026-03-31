@@ -1,0 +1,1 @@
+import{ci as e}from"./index-BRQvpsde.js";const m=l=>l.lineSymbol?.style,y=(l,o)=>{o.lineSymbol??=e(),o.lineSymbol.style=l},n=l=>l.lineSymbol?.width,t=(l,o)=>{o.lineSymbol??=e(),o.lineSymbol.width=l};export{m as k,y as q,n as v,t as z};
