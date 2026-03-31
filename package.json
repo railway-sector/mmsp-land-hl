@@ -16,8 +16,10 @@
     "@arcgis/core": "^5.0.0",
     "@arcgis/map-components": "^5.0.0",
     "@esri/calcite-components": "^5.0.0",
+    "npm-dropdown-package": "^1.0.5",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-select": "^5.10.2"
   },
   "devDependencies": {
     "@types/node": "~24.10.1",
