@@ -1,3 +1,5 @@
+export const portalURL = { url: "https://gis.railway-sector.com/portal" };
+
 // Chart and chart label color
 export const primaryLabelColor = "#d1d5db";
 export const valueLabelColor = "#d1d5db";

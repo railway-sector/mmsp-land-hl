@@ -24,15 +24,14 @@ import {
   isfRelocationColor,
   handedOverField,
   tobeHandedOverField,
+  portalURL,
 } from "./uniqueValues";
 
 /* Standalone table for Dates */
 export const dateTable = new FeatureLayer({
   portalItem: {
     id: "a084d9cae5234d93b7aa50f7eb782aec",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
 });
 
@@ -122,9 +121,7 @@ const stationBoxRenderer = new UniqueValueRenderer({
 export const stationBoxLayer = new FeatureLayer({
   portalItem: {
     id: "52d4f29105934e3f95f6b39c7e5fba6e",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 2,
   renderer: stationBoxRenderer,
@@ -181,9 +178,7 @@ const lotLabel = new LabelClass({
 export const lotLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 8,
   title: "Land Acquisition",
@@ -239,9 +234,7 @@ const publicLotRenderer = new UniqueValueRenderer({
 export const publicLotLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 8,
   title: "Public Lot",
@@ -304,9 +297,7 @@ const lotLayerBoundaryLabel = new LabelClass({
 export const lotLayerBoundary = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 8,
 
@@ -336,9 +327,7 @@ const handedOverRenderer = new UniqueValueRenderer({
 export const handedOverLotLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 8,
   definitionExpression: `${handedOverField} = 1`,
@@ -368,9 +357,7 @@ const toBeHandedOverRenderer = new UniqueValueRenderer({
 export const tobeHandedOverLotLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 8,
   title: "To be Handed Over (to JV)",
@@ -382,9 +369,7 @@ export const tobeHandedOverLotLayer = new FeatureLayer({
 export const pteLotSubteLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 8,
 
@@ -432,9 +417,7 @@ export const structureLayerRenderer = new UniqueValueRenderer({
 export const structureLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 9,
   title: "Existing Structure",
@@ -493,9 +476,7 @@ const structureDemolishedRenderer = new UniqueValueRenderer({
 export const structureDemolishedLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 9,
   title: "Demolished Structure",
@@ -552,9 +533,7 @@ const isfRenderer = new UniqueValueRenderer({
 export const isfLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 10,
   title: "ISF (Informal Settlers Families)",
@@ -585,9 +564,7 @@ const ConstructionBoundaryFill = new UniqueValueRenderer({
 export const constructionBoundaryLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 4,
 
@@ -604,9 +581,7 @@ export const constructionBoundaryLayer = new FeatureLayer({
 export const alignmentLine = new FeatureLayer({
   portalItem: {
     id: "52d4f29105934e3f95f6b39c7e5fba6e",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 6,
 
@@ -618,9 +593,7 @@ export const alignmentLine = new FeatureLayer({
 export const dpwhSegmentLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 2,
   title: "DPWH Segment",
@@ -632,9 +605,7 @@ export const dpwhSegmentLayer = new FeatureLayer({
 export const depotBuildingLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 6,
   title: "Depot Building",
@@ -646,9 +617,7 @@ export const depotBuildingLayer = new FeatureLayer({
 export const bssDepotBuildingLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 7,
   title: "BSS Building",
@@ -660,9 +629,7 @@ export const bssDepotBuildingLayer = new FeatureLayer({
 export const evsLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 1,
   title: "East Valenzuela Station",
@@ -674,9 +641,7 @@ export const evsLayer = new FeatureLayer({
 export const senateBoundaryLayer = new FeatureLayer({
   portalItem: {
     id: "0c172b82ddab44f2bb439542dd75e8ae",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 5,
   title: "NCC Property",
@@ -702,9 +667,7 @@ const stationLabels = new LabelClass({
 export const stationLayer = new FeatureLayer({
   portalItem: {
     id: "52d4f29105934e3f95f6b39c7e5fba6e",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 1,
   labelingInfo: [stationLabels],
@@ -717,14 +680,58 @@ stationLayer.listMode = "hide";
 export const creekDivLayer = new FeatureLayer({
   portalItem: {
     id: "52d4f29105934e3f95f6b39c7e5fba6e",
-    portal: {
-      url: "https://gis.railway-sector.com/portal",
-    },
+    portal: portalURL,
   },
   layerId: 3,
   title: "Creek Diversion",
 
   popupEnabled: false,
+});
+
+export const oas_accessRoad = new FeatureLayer({
+  portalItem: {
+    id: "437ae464f49544e080c9dda8f98a169d",
+    portal: portalURL,
+  },
+  layerId: 29,
+  title: "OAS Access Road",
+  // outFields: ['*'],
+  popupEnabled: false,
+});
+
+const oas_affectedStructuresLabels = new LabelClass({
+  symbol: new TextSymbol({
+    color: "black",
+    font: {
+      size: 8,
+      weight: "bold",
+    },
+    haloColor: "white",
+    haloSize: "0.5pt",
+  }),
+  // labelPlacement: 'above-center',
+  labelExpressionInfo: {
+    expression: "$feature.STRUCTURE_TAG_NO_",
+  },
+});
+export const oas_affectedStructures = new FeatureLayer({
+  portalItem: {
+    id: "437ae464f49544e080c9dda8f98a169d",
+    portal: portalURL,
+  },
+  layerId: 28,
+  title: "OAS Affected Structures",
+  // outFields: ['*'],
+  popupEnabled: false,
+  labelingInfo: [oas_affectedStructuresLabels],
+});
+
+// Group Layer
+export const accessRoadOptionsGroupLayer = new GroupLayer({
+  title: "Ortigas Station",
+  visible: true,
+  visibilityMode: "independent",
+  layers: [oas_affectedStructures, oas_accessRoad],
 });
 
 export const lotGroupLayer = new GroupLayer({

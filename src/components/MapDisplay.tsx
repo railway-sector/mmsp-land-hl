@@ -18,6 +18,7 @@ import {
   lotLayer,
   stationLayer,
   structuresGroupLayer,
+  accessRoadOptionsGroupLayer,
 } from "../layers";
 import type { ArcgisMap } from "@arcgis/map-components/components/arcgis-map";
 import type { ArcgisSearch } from "@arcgis/map-components/components/arcgis-search";
@@ -38,6 +39,7 @@ export default function MapDisplay() {
     arcgisMap?.map?.add(boundaryGroupLayer);
     arcgisMap?.map?.add(stationLayer);
     arcgisMap?.map?.add(alignmentLine);
+    arcgisMap?.map?.add(accessRoadOptionsGroupLayer);
 
     // Search components
     const sources: any = [
