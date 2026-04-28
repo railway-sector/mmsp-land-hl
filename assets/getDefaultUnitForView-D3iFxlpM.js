@@ -1,0 +1,1 @@
+import{Z as i,fV as a}from"./index-DoZ4-PNk.js";function o(e){const t="metric";if(!e)return t;const{map:r}=e,n=(r&&"portalItem"in r?r.portalItem?.portal:null)??i.getDefault();switch(n.user?.units??n.units){case t:return t;case"english":return"imperial"}return a(e.spatialReference)??t}export{o as e};
