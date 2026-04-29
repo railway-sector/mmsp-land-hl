@@ -1,27 +1,38 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { use, useEffect, useRef, useState } from "react";
-import { lotLayer } from "../layers";
+import {
+  handedOverLotLayer,
+  lotLayer,
+  publicLotLayer,
+  subterraenanLots18_layer,
+  tobeHandedOverLotLayer,
+} from "../layers";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5percent from "@amcharts/amcharts5/percent";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import am5themes_Responsive from "@amcharts/amcharts5/themes/Responsive";
 import {
   chartRenderer,
-  generateHandedOver,
-  generateLotData,
-  generateLotNumber,
-  generateToBeHandedOver,
-  queryLayersExpression,
+  pieChartStatusData,
+  queryDefinitionExpression,
+  queryExpression,
   thousands_separators,
+  totalFieldCount,
+  totalFieldSum,
   zoomToLayer,
 } from "../Query";
 import "@esri/calcite-components/components/calcite-checkbox";
 import "@esri/calcite-components/components/calcite-label";
 import "@esri/calcite-components/components/calcite-panel";
 import {
+  handedOverField,
+  lot_id_field,
   lotStatusField,
   primaryLabelColor,
+  statusLotColor,
+  statusLotLabel,
   statusLotQuery,
+  tobeHandedOverField,
   valueLabelColor,
 } from "../uniqueValues";
 import { ArcgisMap } from "@arcgis/map-components/dist/components/arcgis-map";
@@ -89,43 +100,104 @@ const LotChart = () => {
 
   const chartID = "pie-two";
 
-  const [lotNumber, setLotNumber] = useState([]);
-  const [handedOverNumber, setHandedOverNumber] = useState([]);
-  const [toBeHandedOverNumber, setToBeHandedOverNumber] = useState([]);
+  const [lotNumber, setLotNumber] = useState<number>(0);
+  const [privateLotNumber, setPrivateLotNumber] = useState<number>(0);
+  const [publicLotNumber, setPublicLotNumber] = useState<number>(0);
+  const [handedOverNumber, setHandedOverNumber] = useState<number>(0);
+  const [percentHandedOverNumber, setPercentHandedOverNumber] =
+    useState<number>(0);
+  const [toBeHandedOverNumber, setToBeHandedOverNumber] = useState<number>(0);
+  const [percentToBeHandedOverNumber, setPercentToBeHandedOverNumber] =
+    useState<number>(0);
 
   useEffect(() => {
-    queryLayersExpression({
+    queryDefinitionExpression({
+      queryExpression: queryExpression({
+        contractcp: contractp,
+        landtype: landtype,
+        landsection: landsection,
+      }),
+      featureLayer: [
+        lotLayer,
+        handedOverLotLayer,
+        publicLotLayer,
+        tobeHandedOverLotLayer,
+        subterraenanLots18_layer,
+      ],
+      // timesliderstate,
+      // arcgisMap,
+    });
+
+    //--- chart data
+    pieChartStatusData({
       contractcp: contractp,
       landtype: landtype,
       landsection: landsection,
-      arcgisMap: arcgisMap,
+      layer: lotLayer,
+      statusList: statusLotLabel,
+      statusColor: statusLotColor,
+      statusField: lotStatusField,
+      statisticType: "count",
+    }).then((result: any) => {
+      setLotData(result[0]);
+      setPrivateLotNumber(result[1]);
     });
 
-    generateLotData(contractp, landtype, landsection).then((result: any) => {
-      setLotData(result);
+    //--- total number of lots (public + private)
+    totalFieldCount({
+      contractcp: contractp,
+      landtype: landtype,
+      landsection: landsection,
+      layer: lotLayer,
+      idField: lot_id_field,
+    }).then((result: any) => {
+      setLotNumber(result);
     });
 
-    // Lot number
-    generateLotNumber(contractp, landtype, landsection).then(
-      (response: any) => {
-        setLotNumber(response);
-      },
-    );
+    //--- total number of public lots
+    totalFieldCount({
+      contractcp: contractp,
+      landtype: landtype,
+      landsection: landsection,
+      layer: publicLotLayer,
+      idField: lot_id_field,
+      queryField: "StatusNVS3 IS NULL", // Only count lots with status "Paid" in public lot layer
+    }).then((result: any) => {
+      setPublicLotNumber(result);
+    });
 
-    generateHandedOver(contractp, landtype, landsection).then(
-      (response: any) => {
-        setHandedOverNumber(response);
-      },
-    );
+    //--- Number of handed-over lots (GC to JV)
+    totalFieldSum({
+      contractcp: contractp,
+      landtype: landtype,
+      landsection: landsection,
+      layer: lotLayer,
+      valueSumField: handedOverField,
+    }).then((result: any) => {
+      setHandedOverNumber(result);
+    });
 
-    generateToBeHandedOver(contractp, landtype, landsection).then(
-      (response: any) => {
-        setToBeHandedOverNumber(response);
-      },
-    );
-
+    //--- Number of To-be-handed-over lots (to JV)
+    totalFieldSum({
+      contractcp: contractp,
+      landtype: landtype,
+      landsection: landsection,
+      layer: lotLayer,
+      valueSumField: tobeHandedOverField,
+    }).then((result: any) => {
+      setToBeHandedOverNumber(result);
+    });
     zoomToLayer(lotLayer, arcgisMap);
   }, [contractp, landtype, landsection]);
+
+  useEffect(() => {
+    setPercentHandedOverNumber(
+      Math.round((handedOverNumber / lotNumber) * 100),
+    );
+    setPercentToBeHandedOverNumber(
+      Math.round((toBeHandedOverNumber / lotNumber) * 100),
+    );
+  }, [privateLotNumber, lotNumber, handedOverNumber, toBeHandedOverNumber]);
 
   // 1. Pie Chart for Land Acquisition
   useEffect(() => {
@@ -262,7 +334,7 @@ const LotChart = () => {
                 margin: "auto",
               }}
             >
-              {thousands_separators(lotNumber[0])}
+              {thousands_separators(lotNumber)}
             </dd>
           </dl>
 
@@ -286,7 +358,7 @@ const LotChart = () => {
                 margin: "auto",
               }}
             >
-              {thousands_separators(lotNumber[2])}
+              {thousands_separators(publicLotNumber)}
             </dd>
           </dl>
         </div>
@@ -331,8 +403,8 @@ const LotChart = () => {
                 margin: "auto",
               }}
             >
-              {handedOverNumber[0]}% (
-              {thousands_separators(handedOverNumber[1])})
+              {percentHandedOverNumber}% (
+              {thousands_separators(handedOverNumber)})
             </dd>
           </dl>
 
@@ -356,8 +428,8 @@ const LotChart = () => {
                 margin: "auto",
               }}
             >
-              {toBeHandedOverNumber[0]}% (
-              {thousands_separators(toBeHandedOverNumber[1])})
+              {percentToBeHandedOverNumber}% (
+              {thousands_separators(toBeHandedOverNumber)})
             </dd>
           </dl>
         </div>

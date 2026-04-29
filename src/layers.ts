@@ -25,6 +25,7 @@ import {
   handedOverField,
   tobeHandedOverField,
   portalURL,
+  lot_id_field,
 } from "./uniqueValues";
 
 /* Standalone table for Dates */
@@ -183,6 +184,7 @@ export const lotLayer = new FeatureLayer({
   layerId: 8,
   title: "Land Acquisition",
   labelingInfo: [lotLabel],
+  outFields: [lot_id_field, lotStatusField],
   renderer: lotLayerStatusRenderer,
   popupTemplate: {
     title: "<p>{Id}</p>",
@@ -202,6 +204,75 @@ export const lotLayer = new FeatureLayer({
           {
             fieldName: "H_Level",
             label: "<p>Status of Land Acquisition</p>",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+/* Subteranean Lots with tunnel deeper than 18m */
+const subterraenanLots18Renderer = new UniqueValueRenderer({
+  valueExpression:
+    "When($feature.Tunnel_Depth > 18, 'deepSubte', 'shallowSubte')",
+  uniqueValueInfos: [
+    {
+      value: "deepSubte",
+      label: "Tunnel Depth (>18m)",
+      symbol: new SimpleFillSymbol({
+        color: "#7CFC00",
+        style: "backward-diagonal",
+        outline: {
+          color: "#7CFC00",
+          width: 1,
+        },
+      }),
+    },
+    // {
+    //   value: "shallowSubte",
+    //   label: "Subterranean Lots (<=18m)",
+    //   symbol: new SimpleFillSymbol({
+    //     color: undefined,
+    //   }),
+    // },
+  ],
+});
+
+export const subterraenanLots18_layer = new FeatureLayer({
+  portalItem: {
+    id: "0c172b82ddab44f2bb439542dd75e8ae",
+    portal: portalURL,
+  },
+  layerId: 8,
+  outFields: [lot_id_field, lotStatusField],
+  title: "Subterranean Lots",
+  definitionExpression: "Type = 'Subterranean' AND Tunnel_Depth > 18",
+  labelingInfo: [lotLabel],
+  renderer: subterraenanLots18Renderer,
+  minScale: 50000,
+  maxScale: 0,
+  popupTemplate: {
+    title: "<p>{Id}</p>",
+    lastEditInfoEnabled: false,
+    returnGeometry: true,
+    content: [
+      {
+        type: "fields",
+        fieldInfos: [
+          {
+            fieldName: "OWNER",
+            label: "Land Owner",
+          },
+          {
+            fieldName: "Station1",
+          },
+          {
+            fieldName: "StatusNVS3",
+            label: "<p>Status of Land Acquisition</p>",
+          },
+          {
+            fieldName: "Tunnel_Depth",
+            label: "Tunnel Depth (m)",
           },
         ],
       },
@@ -744,6 +815,7 @@ export const lotGroupLayer = new GroupLayer({
     pteLotSubteLayer,
     handedOverLotLayer,
     tobeHandedOverLotLayer,
+    subterraenanLots18_layer,
   ],
 });
 

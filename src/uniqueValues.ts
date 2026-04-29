@@ -1,3 +1,5 @@
+export type statisticsType = "count" | "sum";
+
 export const portalURL = { url: "https://gis.railway-sector.com/portal" };
 
 // Chart and chart label color
@@ -76,7 +78,8 @@ export async function defineActions(event: any) {
   item.title === "Handed Over (GC to JV)" ||
   item.title === "To be Handed Over (to JV)" ||
   item.title === "Structures" ||
-  item.title === "EVS Station/Creek"
+  item.title === "EVS Station/Creek" ||
+  item.title === "Subterranean Lots"
     ? (item.visible = false)
     : (item.visible = true);
 }
