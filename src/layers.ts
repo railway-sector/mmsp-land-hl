@@ -26,7 +26,47 @@ import {
   tobeHandedOverField,
   portalURL,
   lot_id_field,
+  cpField,
+  lotTypeField,
+  station1Field,
 } from "./uniqueValues";
+import QueryExpressionLayers from "query-layers-expression";
+
+export const queryc = new QueryExpressionLayers(
+  [undefined, undefined, undefined],
+  [cpField, lotTypeField, station1Field],
+  undefined,
+  undefined,
+  "string",
+  0,
+  undefined,
+  undefined,
+  undefined,
+);
+
+export const queryc2 = new QueryExpressionLayers(
+  [undefined, undefined, undefined],
+  [cpField, lotTypeField, station1Field],
+  undefined,
+  undefined,
+  "string",
+  0,
+  undefined,
+  undefined,
+  undefined,
+);
+
+export const querycRenderer = new QueryExpressionLayers(
+  [undefined, undefined, undefined],
+  [cpField, lotTypeField, station1Field],
+  undefined,
+  undefined,
+  "string",
+  0,
+  undefined,
+  undefined,
+  undefined,
+);
 
 /* Standalone table for Dates */
 export const dateTable = new FeatureLayer({
@@ -770,6 +810,42 @@ export const oas_accessRoad = new FeatureLayer({
   popupEnabled: false,
 });
 
+// OAS affected structure
+const oas_affecctedStructure_Renderer = new UniqueValueRenderer({
+  field: "REMARKS",
+  uniqueValueInfos: [
+    {
+      value: "Areas not yet Handed Over",
+      label: "Areas not yet Handed Over",
+      symbol: new SimpleFillSymbol({
+        style: "solid",
+        color: "white",
+        // outline: {
+        //   style: "long-dash",
+        //   width: 1,
+        //   color: "white",
+        // },
+      }),
+    },
+    {
+      value: "Handed Over Areas",
+      label: "Handed Over Areas",
+      symbol: new SimpleFillSymbol({
+        style: "solid",
+        color: "#FFE5B4",
+      }),
+    },
+    {
+      value: "Demolished",
+      label: "Demolished",
+      symbol: new SimpleFillSymbol({
+        style: "solid",
+        color: "gray",
+      }),
+    },
+  ],
+});
+
 const oas_affectedStructuresLabels = new LabelClass({
   symbol: new TextSymbol({
     color: "black",
@@ -793,6 +869,7 @@ export const oas_affectedStructures = new FeatureLayer({
   layerId: 28,
   title: "OAS Affected Structures",
   // outFields: ['*'],
+  renderer: oas_affecctedStructure_Renderer,
   popupEnabled: false,
   labelingInfo: [oas_affectedStructuresLabels],
 });

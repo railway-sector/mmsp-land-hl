@@ -4,6 +4,8 @@ import {
   handedOverLotLayer,
   lotLayer,
   publicLotLayer,
+  queryc,
+  queryc2,
   subterraenanLots18_layer,
   tobeHandedOverLotLayer,
 } from "../layers";
@@ -11,24 +13,18 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5percent from "@amcharts/amcharts5/percent";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import am5themes_Responsive from "@amcharts/amcharts5/themes/Responsive";
-import {
-  chartRenderer,
-  pieChartStatusData,
-  queryDefinitionExpression,
-  queryExpression,
-  thousands_separators,
-  totalFieldCount,
-  totalFieldSum,
-  zoomToLayer,
-} from "../Query";
+import { thousands_separators, zoomToLayer } from "../Query";
 import "@esri/calcite-components/components/calcite-checkbox";
 import "@esri/calcite-components/components/calcite-label";
 import "@esri/calcite-components/components/calcite-panel";
 import {
+  cpField,
   handedOverField,
   lot_id_field,
   lotStatusField,
+  lotTypeField,
   primaryLabelColor,
+  station1Field,
   statusLotColor,
   statusLotLabel,
   statusLotQuery,
@@ -37,6 +33,13 @@ import {
 } from "../uniqueValues";
 import { ArcgisMap } from "@arcgis/map-components/dist/components/arcgis-map";
 import { MyContext } from "../contexts/MyContext";
+import { queryDefinitionExpression } from "../QueryExpression";
+import { chartRenderer } from "../ChartRenderer";
+import {
+  pieChartStatusData,
+  totalFieldCount,
+  totalFieldSum,
+} from "../ChartGenerator";
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -111,12 +114,10 @@ const LotChart = () => {
     useState<number>(0);
 
   useEffect(() => {
+    queryc.qValues = [contractp, landtype, landsection];
+
     queryDefinitionExpression({
-      queryExpression: queryExpression({
-        contractcp: contractp,
-        landtype: landtype,
-        landsection: landsection,
-      }),
+      queryExpression: queryc.queryExpression(),
       featureLayer: [
         lotLayer,
         handedOverLotLayer,
@@ -130,9 +131,7 @@ const LotChart = () => {
 
     //--- chart data
     pieChartStatusData({
-      contractcp: contractp,
-      landtype: landtype,
-      landsection: landsection,
+      qChart: queryc.queryExpression(),
       layer: lotLayer,
       statusList: statusLotLabel,
       statusColor: statusLotColor,
@@ -145,9 +144,7 @@ const LotChart = () => {
 
     //--- total number of lots (public + private)
     totalFieldCount({
-      contractcp: contractp,
-      landtype: landtype,
-      landsection: landsection,
+      qChart: queryc.queryExpression(),
       layer: lotLayer,
       idField: lot_id_field,
     }).then((result: any) => {
@@ -155,22 +152,20 @@ const LotChart = () => {
     });
 
     //--- total number of public lots
+    queryc2.qValues = [contractp, landtype, landsection];
+    queryc2.qExpression = "StatusNVS3 IS NULL";
+
     totalFieldCount({
-      contractcp: contractp,
-      landtype: landtype,
-      landsection: landsection,
+      qChart: queryc2.queryExpression(),
       layer: publicLotLayer,
       idField: lot_id_field,
-      queryField: "StatusNVS3 IS NULL", // Only count lots with status "Paid" in public lot layer
     }).then((result: any) => {
       setPublicLotNumber(result);
     });
 
     //--- Number of handed-over lots (GC to JV)
     totalFieldSum({
-      contractcp: contractp,
-      landtype: landtype,
-      landsection: landsection,
+      qChart: queryc.queryExpression(),
       layer: lotLayer,
       valueSumField: handedOverField,
     }).then((result: any) => {
@@ -179,9 +174,7 @@ const LotChart = () => {
 
     //--- Number of To-be-handed-over lots (to JV)
     totalFieldSum({
-      contractcp: contractp,
-      landtype: landtype,
-      landsection: landsection,
+      qChart: queryc.queryExpression(),
       layer: lotLayer,
       valueSumField: tobeHandedOverField,
     }).then((result: any) => {
@@ -252,9 +245,12 @@ const LotChart = () => {
       pieSeries: pieSeries,
       legend: legend,
       root: root,
-      contractcp: contractp,
-      landtype: landtype,
-      landsection: landsection,
+      q1Value: contractp,
+      q1Field: cpField,
+      q2Value: landtype,
+      q2Field: lotTypeField,
+      q3Value: landsection,
+      q3Field: station1Field,
       status_field: lotStatusField,
       arcgisMap: arcgisMap,
       updateChartPanelwidth: updateChartPanelwidth,
