@@ -35,11 +35,7 @@ import { ArcgisMap } from "@arcgis/map-components/dist/components/arcgis-map";
 import { MyContext } from "../contexts/MyContext";
 import { queryDefinitionExpression } from "../QueryExpression";
 import { chartRenderer } from "../ChartRenderer";
-import {
-  pieChartStatusData,
-  totalFieldCount,
-  totalFieldSum,
-} from "../ChartGenerator";
+import { pieChartStatusData, fieldStatistic } from "../ChartGenerator";
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -143,10 +139,11 @@ const LotChart = () => {
     });
 
     //--- total number of lots (public + private)
-    totalFieldCount({
+    fieldStatistic({
       qChart: queryc.queryExpression(),
       layer: lotLayer,
-      idField: lot_id_field,
+      statisticField: lot_id_field,
+      statisticType: "count",
     }).then((result: any) => {
       setLotNumber(result);
     });
@@ -155,28 +152,31 @@ const LotChart = () => {
     queryc2.qValues = [contractp, landtype, landsection];
     queryc2.qExpression = "StatusNVS3 IS NULL";
 
-    totalFieldCount({
+    fieldStatistic({
       qChart: queryc2.queryExpression(),
       layer: publicLotLayer,
-      idField: lot_id_field,
+      statisticField: lot_id_field,
+      statisticType: "count",
     }).then((result: any) => {
       setPublicLotNumber(result);
     });
 
     //--- Number of handed-over lots (GC to JV)
-    totalFieldSum({
+    fieldStatistic({
       qChart: queryc.queryExpression(),
       layer: lotLayer,
-      valueSumField: handedOverField,
+      statisticField: handedOverField,
+      statisticType: "sum",
     }).then((result: any) => {
       setHandedOverNumber(result);
     });
 
     //--- Number of To-be-handed-over lots (to JV)
-    totalFieldSum({
+    fieldStatistic({
       qChart: queryc.queryExpression(),
       layer: lotLayer,
-      valueSumField: tobeHandedOverField,
+      statisticField: tobeHandedOverField,
+      statisticType: "sum",
     }).then((result: any) => {
       setToBeHandedOverNumber(result);
     });
