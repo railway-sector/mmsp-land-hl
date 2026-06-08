@@ -130,6 +130,7 @@ const LotChart = () => {
       statusList: statusLotLabel,
       statusColor: statusLotColor,
       statusField: lotStatusField,
+      statisticField: lotStatusField,
       statisticType: "count",
     }).then((result: any) => {
       setLotData(result[0]);
@@ -358,8 +359,8 @@ const LotChart = () => {
         <div
           id={chartID}
           style={{
-            width: "100%",
-            height: "55vh",
+            // width: "100%",
+            height: "60vh",
             color: "white",
             marginBottom: "3%",
           }}
