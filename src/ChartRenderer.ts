@@ -45,71 +45,6 @@ type layerViewQueryProps = {
   view: any;
 };
 
-export const highlightFilterLayerView = ({
-  layer,
-  qExpression,
-  view,
-}: layerViewQueryProps) => {
-  const query = layer.createQuery();
-  query.where = qExpression;
-  let highlightSelect: any;
-
-  view?.whenLayerView(layer).then((layerView: any) => {
-    layer?.queryObjectIds(query).then((results: any) => {
-      const objID = results;
-
-      const queryExt = new Query({
-        objectIds: objID,
-      });
-      layer?.queryExtent(queryExt).then((result: any) => {
-        if (result?.extent) {
-          view?.goTo(result.extent);
-        }
-      });
-
-      highlightSelect && highlightSelect.remove();
-      highlightSelect = layerView.highlight(objID);
-    });
-
-    layerView.filter = new FeatureFilter({
-      where: qExpression,
-    });
-
-    // For initial state, we need to add this
-    view?.on("click", () => {
-      layerView.filter = new FeatureFilter({
-        where: undefined,
-      });
-      highlightSelect && highlightSelect.remove();
-    });
-  });
-};
-
-interface chartType {
-  chartItem?: any;
-  chart: any;
-  pieSeries: any;
-  legend: any;
-  root: any;
-  qChart: any;
-  q1Value?: any;
-  q1Field?: any;
-  q2Value?: any;
-  q2Field?: any;
-  q3Value?: any;
-  q3Field?: any;
-  status_field: any;
-  arcgisMap: any;
-  updateChartPanelwidth: any;
-  data: any;
-  pieSeriesScale: any;
-  pieInnerLabel?: any;
-  pieInnerLabelFontSize?: any;
-  pieInnerValueFontSize?: any;
-  layer: FeatureLayer;
-  statusArray: any;
-  background_color_switch?: boolean;
-}
 export function chartRenderer({
   chartItem,
   chart,
@@ -246,4 +181,60 @@ export function chartRenderer({
   });
 
   pieSeries.appear(1000, 100);
+}
+
+export const highlightFilterLayerView = async ({
+  layer,
+  qExpression,
+  view,
+}: layerViewQueryProps) => {
+  const query = layer.createQuery();
+  query.where = qExpression;
+  let highlightSelect: any;
+
+  const layerView = await view?.whenLayerView(layer);
+  const results = await layer?.queryObjectIds(query);
+
+  const queryExt = new Query({ objectIds: results });
+  const qExtResult = await layer?.queryExtent(queryExt);
+  if (qExtResult?.extent) {
+    view?.goTo(qExtResult.extent);
+  }
+
+  highlightSelect && highlightSelect.remove();
+  highlightSelect = layerView.highlight(results);
+
+  layerView.filter = new FeatureFilter({ where: qExpression });
+  view?.on("click", () => {
+    layerView.filter = new FeatureFilter({
+      where: undefined,
+    });
+    highlightSelect && highlightSelect.remove();
+  });
+};
+
+interface chartType {
+  chartItem?: any;
+  chart: any;
+  pieSeries: any;
+  legend: any;
+  root: any;
+  qChart: any;
+  q1Value?: any;
+  q1Field?: any;
+  q2Value?: any;
+  q2Field?: any;
+  q3Value?: any;
+  q3Field?: any;
+  status_field: any;
+  arcgisMap: any;
+  updateChartPanelwidth: any;
+  data: any;
+  pieSeriesScale: any;
+  pieInnerLabel?: any;
+  pieInnerLabelFontSize?: any;
+  pieInnerValueFontSize?: any;
+  layer: FeatureLayer;
+  statusArray: any;
+  background_color_switch?: boolean;
 }

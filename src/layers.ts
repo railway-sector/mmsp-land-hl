@@ -31,9 +31,8 @@ import {
   station1Field,
 } from "./uniqueValues";
 import QueryExpressionLayers from "query-layers-expression";
-
-export const queryc = new QueryExpressionLayers(
-  [undefined, undefined, undefined],
+export const queryc_lot = new QueryExpressionLayers(
+  [undefined, undefined],
   [cpField, lotTypeField, station1Field],
   undefined,
   undefined,
@@ -44,20 +43,8 @@ export const queryc = new QueryExpressionLayers(
   undefined,
 );
 
-export const queryc2 = new QueryExpressionLayers(
-  [undefined, undefined, undefined],
-  [cpField, lotTypeField, station1Field],
-  undefined,
-  undefined,
-  "string",
-  0,
-  undefined,
-  undefined,
-  undefined,
-);
-
-export const querycRenderer = new QueryExpressionLayers(
-  [undefined, undefined, undefined],
+export const queryc_lot2 = new QueryExpressionLayers(
+  [undefined, undefined],
   [cpField, lotTypeField, station1Field],
   undefined,
   undefined,
