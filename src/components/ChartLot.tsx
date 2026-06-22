@@ -69,7 +69,7 @@ const ChartLot = () => {
 
   //--- 2. Streamlined Data Fetching with useQuery
   const { data } = useQuery<ChartResponse | any>({
-    queryKey: queryList,
+    queryKey: [queryList, lotStatusField, lotLayer],
     queryFn: async () => {
       queryc_lot.qValues = queryList;
       queryDefinitionExpression({
@@ -147,6 +147,7 @@ const ChartLot = () => {
         perc_tobe_ho: perc_tob_ho,
       };
     },
+    staleTime: Infinity,
   });
   const chartData = data?.chartData || [];
   const totaln = data?.lotNumber || 0;
@@ -187,7 +188,7 @@ const ChartLot = () => {
       legendValueText: "{valuePercentTotal.formatNumber('#.')}% ({value})",
       radius: 45,
       innerRadius: 28,
-      scale: 1.7,
+      scale: 1,
     });
     pieSeriesRef.current = pieSeries;
     chart.series.push(pieSeries);
@@ -321,9 +322,9 @@ const ChartLot = () => {
           id={chartID}
           style={{
             // width: "100%",
-            height: "60vh",
+            height: "57vh",
             color: "white",
-            marginBottom: "3%",
+            // marginBottom: "3%",
           }}
         ></div>
 
