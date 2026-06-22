@@ -8,13 +8,13 @@ import "@arcgis/map-components/components/arcgis-map";
 import "@arcgis/map-components/components/arcgis-zoom";
 import "@arcgis/map-components/components/arcgis-legend";
 import "@esri/calcite-components/components/calcite-shell";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MapDisplay from "./components/MapDisplay";
 import Header from "./components/Header";
-import LotChart from "./components/LotChart";
-import { MyContext } from "./contexts/MyContext";
 import ActionPanel from "./components/ActionPanel";
+import ChartLot from "./components/ChartLot";
 
+const queryClient = new QueryClient();
 export function App(): React.JSX.Element {
   const [loggedInState, setLoggedInState] = useState<boolean>(false);
   useEffect(() => {
@@ -47,27 +47,6 @@ export function App(): React.JSX.Element {
     loginAndLoadPortal();
   }, []);
 
-  const [contractp, setContractPackage] = useState<any>();
-  const [landtype, setLandtype] = useState<any>();
-  const [landsection, setLandsection] = useState<any>();
-  const [chartPanelwidth, setChartPanelwidth] = useState<any>();
-
-  const updateContractcps = (newContractcp: any) => {
-    setContractPackage(newContractcp);
-  };
-
-  const updateLandtype = (newCompany: any) => {
-    setLandtype(newCompany);
-  };
-
-  const updateLandsection = (newPtLineType: any) => {
-    setLandsection(newPtLineType);
-  };
-
-  const updateChartPanelwidth = (newWidth: any) => {
-    setChartPanelwidth(newWidth);
-  };
-
   return (
     <>
       {loggedInState && (
@@ -79,24 +58,12 @@ export function App(): React.JSX.Element {
               backgroundColor: "#2b2b2b",
             }}
           >
-            <MyContext
-              value={{
-                contractp,
-                landtype,
-                landsection,
-                chartPanelwidth,
-                updateContractcps,
-                updateLandtype,
-                updateLandsection,
-                updateChartPanelwidth,
-              }}
-            >
+            <QueryClientProvider client={queryClient}>
               <ActionPanel />
-              {/* <Chart /> */}
               <MapDisplay />
-              <LotChart />
+              <ChartLot />
               <Header />
-            </MyContext>
+            </QueryClientProvider>
           </calcite-shell>
         </div>
       )}

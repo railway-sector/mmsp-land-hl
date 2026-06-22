@@ -39,12 +39,31 @@ export function responsiveChart(
   });
 }
 
-type layerViewQueryProps = {
-  layer?: any;
-  qExpression?: any;
-  view: any;
-};
-
+interface chartType {
+  chartItem?: any;
+  chart: any;
+  pieSeries: any;
+  legend: any;
+  root: any;
+  qChart: any;
+  q1Value?: any;
+  q1Field?: any;
+  q2Value?: any;
+  q2Field?: any;
+  q3Value?: any;
+  q3Field?: any;
+  status_field: any;
+  arcgisMap: any;
+  updateChartPanelwidth: any;
+  data: any;
+  pieSeriesScale: any;
+  pieInnerLabel?: any;
+  pieInnerLabelFontSize?: any;
+  pieInnerValueFontSize?: any;
+  layer: FeatureLayer;
+  statusArray: any;
+  background_color_switch?: boolean;
+}
 export function chartRenderer({
   chartItem,
   chart,
@@ -118,6 +137,7 @@ export function chartRenderer({
       layer: layer,
       qExpression: qChart.queryExpression(),
       view: arcgisMap?.view,
+      qChart: qChart,
     });
   });
 
@@ -183,13 +203,21 @@ export function chartRenderer({
   pieSeries.appear(1000, 100);
 }
 
+type layerViewQueryProps = {
+  layer?: any;
+  qExpression?: any;
+  view: any;
+  qChart?: any;
+};
+
 export const highlightFilterLayerView = async ({
   layer,
   qExpression,
   view,
+  qChart,
 }: layerViewQueryProps) => {
   const query = layer.createQuery();
-  query.where = qExpression;
+  query.where = qChart.queryExpression();
   let highlightSelect: any;
 
   const layerView = await view?.whenLayerView(layer);
@@ -209,32 +237,8 @@ export const highlightFilterLayerView = async ({
     layerView.filter = new FeatureFilter({
       where: undefined,
     });
+    qChart.qExpression = undefined;
+    qChart.q2Expression = undefined;
     highlightSelect && highlightSelect.remove();
   });
 };
-
-interface chartType {
-  chartItem?: any;
-  chart: any;
-  pieSeries: any;
-  legend: any;
-  root: any;
-  qChart: any;
-  q1Value?: any;
-  q1Field?: any;
-  q2Value?: any;
-  q2Field?: any;
-  q3Value?: any;
-  q3Field?: any;
-  status_field: any;
-  arcgisMap: any;
-  updateChartPanelwidth: any;
-  data: any;
-  pieSeriesScale: any;
-  pieInnerLabel?: any;
-  pieInnerLabelFontSize?: any;
-  pieInnerValueFontSize?: any;
-  layer: FeatureLayer;
-  statusArray: any;
-  background_color_switch?: boolean;
-}

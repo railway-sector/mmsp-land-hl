@@ -1,59 +1,74 @@
-import { useEffect, useState, use } from "react";
+import { useState } from "react";
 import Select from "react-select";
 import "../index.css";
-import { lotLayer } from "../layers";
 import GenerateDropdownData from "npm-dropdown-package";
-import { MyContext } from "../contexts/MyContext";
+import { lotLayer } from "../layers";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { locationKeys } from "../interfaceKeys";
+import type { SelectedLocation } from "../interfaceKeys";
 
 export default function DropdownData() {
-  const { updateContractcps, updateLandtype, updateLandsection } =
-    use(MyContext);
+  const queryClient = useQueryClient();
 
-  // For dropdown filter
-  const [initCpTypeSection, setInitCpTypeSection] = useState<
-    null | undefined | any
-  >();
-
-  const [contractPackage, setContractPackage] = useState<null | any>(null);
-  const [landType, setLandType] = useState<null | any>(null);
+  const [cPackageSelected, setCPackageSelected] = useState<null | any>(null);
+  const [landTypeSelected, setLandTypeSelected] = useState<null | any>(null);
   const [landSection, setLandSection] = useState<null | any>(null);
 
-  const [landTypeList, setLandTypeList] = useState([]);
-  const [landSectionList, setLandSectionList] = useState([]);
-  // const [landTypeSelected, setLandTypeSelected] = useState({ name: "" });
+  const [landTypeList, setLandTypeList] = useState<any>([]);
+  const [landSectionList, setLandSectionList] = useState<any>([]);
 
-  useEffect(() => {
-    const dropdownData = new GenerateDropdownData(
-      [lotLayer],
-      ["Package", "Type", "Station1"],
-    );
+  const { data: cpackageList } = useQuery<any>({
+    queryKey: ["dropdownData"], // Do not add lotLayer as a dependency. The dropdown list will not be updated properly.
+    queryFn: async () => {
+      const dropdownData = new GenerateDropdownData(
+        [lotLayer],
+        ["Package", "Type", "Station1"],
+      );
+      return await dropdownData.dropDownQuery();
+    },
+    staleTime: Infinity, // never refetch in the backround. If not Inifity, it will refetch.
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
-    dropdownData.dropDownQuery().then((response: any) => {
-      setInitCpTypeSection(response);
+  // this instantly updates the global cache
+  function updateDropdownListValues(
+    cp_obj_field: SelectedLocation["cpackage"],
+    type_obj_field: SelectedLocation["landType"],
+    section_obj_field: SelectedLocation["landSection"],
+  ) {
+    return queryClient.setQueryData<SelectedLocation>(locationKeys.selected, {
+      cpackage: cp_obj_field,
+      landType: type_obj_field,
+      landSection: section_obj_field,
     });
-  }, []);
+  }
 
+  // handle change event of the Municipality dropdown
   const handleContractPackageChange = (obj: any) => {
-    setContractPackage(obj);
+    updateDropdownListValues(obj.field1, undefined, undefined);
+    setCPackageSelected(obj);
     setLandTypeList(obj.field2);
-    setLandType(null);
+    setLandTypeSelected(null);
     setLandSection(null);
-    updateContractcps(obj.field1);
-    updateLandtype(undefined);
-    updateLandsection(undefined);
   };
 
+  // handle change event of the barangay dropdownff
   const handleLandTypeChange = (obj: any) => {
-    setLandType(obj);
+    updateDropdownListValues(cPackageSelected?.field1, obj.name, undefined);
+    setLandTypeSelected(obj);
     setLandSectionList(obj.field3);
     setLandSection(null);
-    updateLandtype(obj.name);
-    updateLandsection(undefined);
   };
 
   const handleLandSectionChange = (obj: any) => {
+    updateDropdownListValues(
+      cPackageSelected?.field1,
+      landTypeSelected?.name,
+      obj.name,
+    );
     setLandSection(obj);
-    updateLandsection(obj.name);
   };
 
   // Style CSS
@@ -63,13 +78,12 @@ export default function DropdownData() {
       return {
         ...styles,
         backgroundColor: isFocused
-          ? "#555555"
+          ? "#999999"
           : isSelected
             ? "#2b2b2b"
             : "#2b2b2b",
         color: "#ffffff",
         width: "200px",
-        zIndex: 999,
       };
     },
 
@@ -77,10 +91,9 @@ export default function DropdownData() {
       ...defaultStyles,
       backgroundColor: "#2b2b2b",
       borderColor: "#949494",
-      height: 35,
-      width: "200px",
       color: "#ffffff",
-      zIndex: 999,
+      touchUi: false,
+      width: "200px",
     }),
     singleValue: (defaultStyles: any) => ({ ...defaultStyles, color: "#fff" }),
   };
@@ -98,8 +111,8 @@ export default function DropdownData() {
     >
       <Select
         placeholder="Select CP"
-        value={contractPackage}
-        options={initCpTypeSection}
+        value={cPackageSelected}
+        options={cpackageList && cpackageList}
         onChange={handleContractPackageChange}
         getOptionLabel={(x: any) => x.field1}
         styles={customstyles}
@@ -109,8 +122,8 @@ export default function DropdownData() {
       <div style={{ marginRight: "5px", marginLeft: "5px" }}></div>
       <Select
         placeholder="Select Land Type"
-        value={landType}
-        options={landTypeList}
+        value={landTypeSelected}
+        options={landTypeList && landTypeList}
         onChange={handleLandTypeChange}
         getOptionLabel={(x: any) => x.name}
         styles={customstyles}
@@ -120,7 +133,7 @@ export default function DropdownData() {
       <Select
         placeholder="Select Station/Area"
         value={landSection}
-        options={landSectionList}
+        options={landSectionList && landSectionList}
         onChange={handleLandSectionChange}
         getOptionLabel={(x: any) => x.name}
         styles={customstyles}

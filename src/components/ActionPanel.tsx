@@ -3,7 +3,7 @@ import "@esri/calcite-components/components/calcite-list-item";
 import "@esri/calcite-components/components/calcite-shell-panel";
 import "@esri/calcite-components/components/calcite-action";
 import "@esri/calcite-components/components/calcite-action-bar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "@arcgis/map-components/components/arcgis-basemap-gallery";
 import "@arcgis/map-components/components/arcgis-layer-list";
 import "@arcgis/map-components/components/arcgis-legend";
@@ -15,24 +15,21 @@ function ActionPanel() {
   const [nextWidget, setNextWidget] = useState(null);
   const shellPanel: any = document.getElementById("left-shell-panel");
 
-  // End of dropdown list
-  useEffect(() => {
-    if (activeWidget) {
-      const actionActiveWidget: any = document.querySelector(
-        `[data-panel-id=${activeWidget}]`,
-      );
-      actionActiveWidget.hidden = true;
-      shellPanel.collapsed = true;
-    }
+  if (activeWidget) {
+    const actionActiveWidget: any = document.querySelector(
+      `[data-panel-id=${activeWidget}]`,
+    );
+    actionActiveWidget.hidden = true;
+    shellPanel.collapsed = true;
+  }
 
-    if (nextWidget !== activeWidget) {
-      const actionNextWidget: any = document.querySelector(
-        `[data-panel-id=${nextWidget}]`,
-      );
-      actionNextWidget.hidden = false;
-      shellPanel.collapsed = false;
-    }
-  });
+  if (nextWidget !== activeWidget) {
+    const actionNextWidget: any = document.querySelector(
+      `[data-panel-id=${nextWidget}]`,
+    );
+    actionNextWidget.hidden = false;
+    shellPanel.collapsed = false;
+  }
 
   return (
     <>
@@ -75,17 +72,6 @@ function ActionPanel() {
             }}
           ></calcite-action>
 
-          {/* <calcite-action
-            data-action-id="timeslider"
-            icon="sliders-horizontal"
-            text="Handed-Over Lots"
-            id="timeslider"
-            onClick={(event: any) => {
-              setNextWidget(event.target.id);
-              setActiveWidget(nextWidget === activeWidget ? null : nextWidget);
-            }}
-          ></calcite-action> */}
-
           {/*<CalciteAction
             data-action-id="charts"
             icon="graph-time-series"
@@ -125,11 +111,7 @@ function ActionPanel() {
           <arcgis-basemap-gallery referenceElement="arcgis-map"></arcgis-basemap-gallery>
         </calcite-panel>
 
-        <calcite-panel
-          height="l"
-          data-panel-id="timeslider"
-          hidden
-        ></calcite-panel>
+        <calcite-panel data-panel-id="timeslider" hidden></calcite-panel>
 
         {/* <CalcitePanel
           class="timeSeries-panel"
@@ -157,6 +139,7 @@ function ActionPanel() {
             </div>
           ) : (
             <div className="informationDiv" hidden></div>
+            // <div className="informationDiv" hidden></div>
           )}
         </calcite-panel>
       </calcite-shell-panel>
