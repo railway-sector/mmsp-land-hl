@@ -17,8 +17,6 @@ import {
   lot_id_field,
   lotStatusField,
   primaryLabelColor,
-  statusLotColor,
-  statusLotLabel,
   statusLotQuery,
   tobeHandedOverField,
   valueLabelColor,
@@ -87,8 +85,7 @@ const ChartLot = () => {
       const chartData = await pieChartStatusData({
         qChart: queryc_lot.queryExpression(),
         layer: lotLayer,
-        statusList: statusLotLabel,
-        statusColor: statusLotColor,
+        statusList: statusLotQuery,
         statusField: lotStatusField,
         statisticField: lotStatusField,
         statisticType: "count",

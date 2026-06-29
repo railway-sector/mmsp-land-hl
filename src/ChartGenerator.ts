@@ -11,7 +11,6 @@ interface pieChartStatusDataType {
   qChart: any;
   layer: any;
   statusList?: any;
-  statusColor?: any;
   statusField?: any;
   statisticField?: any;
   valueSumField?: any;
@@ -22,7 +21,6 @@ export async function pieChartStatusData({
   qChart,
   layer,
   statusList,
-  statusColor,
   statusField,
   statisticField,
   statisticType,
@@ -56,20 +54,22 @@ export async function pieChartStatusData({
     const isStringOrNumber = typeof statusName === "number";
 
     return Object.assign({
-      category: isStringOrNumber ? statusList[statusName - 1] : statusName,
+      category: isStringOrNumber
+        ? statusList.find((item: any) => item.value === statusName)?.category
+        : statusName,
       value: attributes.statsCollect,
     });
   });
 
   //--- Account for zero count
-  const data0 = statusList.map((status: any, index: any) => {
-    const find = data.find((emp: any) => emp.category === status);
+  const data0 = statusList.map((status: any) => {
+    const find = data.find((emp: any) => emp.category === status.category);
     const value = find === undefined ? 0 : find?.value;
     return Object.assign({
-      category: status,
+      category: status.category,
       value: value,
       sliceSettings: {
-        fill: am5.color(statusColor[index]),
+        fill: am5.color(status.color),
       },
     });
   });
