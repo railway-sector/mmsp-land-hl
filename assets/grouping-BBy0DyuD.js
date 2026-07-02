@@ -1,1 +1,0 @@
-import{cc as n}from"./index-Ca4GzoPQ.js";function f(r,e){let t;if(typeof r=="string")t=n(r+`-seed(${e})`);else{let o=12;t=r^e;do t=107*(t>>8^t)+o|0;while(--o!==0)}return(1+t/(1<<31))/2}function s(r){return Math.floor(f(r,i)*l)}const i=53290320,l=10;export{f as e,s as o};

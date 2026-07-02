@@ -1,1 +1,0 @@
-import{n as a}from"./index-Ca4GzoPQ.js";const s=/\.(\w+)$/;function c(n){const t=new URL(n).pathname.match(s);return!t||t.length<2?null:t[1].toUpperCase()}const m=async(n,t)=>{const o=await a(n,{...t,method:"head"}),e=o?.getHeader?.("Content-Type");return e?e.split("/")[1]:null};export{m as getDatasetFormat,c as guessExtensionFromURI};
