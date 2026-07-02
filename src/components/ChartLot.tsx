@@ -3,13 +3,19 @@ import { useEffect, useRef, useState } from "react";
 import {
   handedOverLotLayer,
   lotLayer,
+  piechart,
   publicLotLayer,
   queryc_lot,
   queryc_lot2,
   subterraenanLots18_layer,
   tobeHandedOverLotLayer,
 } from "../layers";
-import { thousands_separators, zoomToLayer } from "../query";
+import {
+  pieChartData,
+  thousands_separators,
+  zoomToLayer,
+  fieldStatistic,
+} from "../query";
 import "@esri/calcite-components/components/calcite-checkbox";
 import "@esri/calcite-components/components/calcite-label";
 import {
@@ -23,7 +29,6 @@ import {
 } from "../uniqueValues";
 import { ArcgisMap } from "@arcgis/map-components/dist/components/arcgis-map";
 import { chartRenderer } from "../chartRenderer";
-import { pieChartStatusData, fieldStatistic } from "../chartGenerator";
 import { useQuery } from "@tanstack/react-query";
 import { locationKeys } from "../interfaceKeys";
 import type { SelectedLocation, ChartResponse } from "../interfaceKeys";
@@ -82,8 +87,9 @@ const ChartLot = () => {
       });
 
       //--- chart data
-      const chartData = await pieChartStatusData({
-        qChart: queryc_lot.queryExpression(),
+      const chartData = await pieChartData({
+        piechart: piechart,
+        qChart: queryc_lot,
         layer: lotLayer,
         statusList: statusLotQuery,
         statusField: lotStatusField,

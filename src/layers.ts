@@ -31,6 +31,17 @@ import {
   station1Field,
 } from "./uniqueValues";
 import QueryExpressionLayers from "query-layers-expression";
+import ChartPieSeries from "chart-pie-series";
+
+export const piechart = new ChartPieSeries(
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+);
+
 export const queryc_lot = new QueryExpressionLayers(
   [undefined, undefined],
   [cpField, lotTypeField, station1Field],

@@ -13,10 +13,11 @@
   },
   "dependencies": {
     "@arcgis/charts-components": "^5.0.0",
-    "@arcgis/core": "^5.0.0",
+    "@arcgis/core": "^5.1.8",
     "@arcgis/map-components": "^5.0.0",
     "@esri/calcite-components": "^5.0.0",
     "@tanstack/react-query": "^5.101.0",
+    "chart-pie-series": "^1.0.0",
     "npm-dropdown-package": "^1.0.5",
     "query-layers-expression": "^1.0.10",
     "react": "^19.2.0",

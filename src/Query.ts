@@ -1,5 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { dateTable } from "./layers";
+import type { statisticsType } from "./uniqueValues";
+import StatisticDefinition from "@arcgis/core/rest/support/StatisticDefinition";
+import Query from "@arcgis/core/rest/support/Query";
 
 //----------------------------------------//
 //------        Date and Month       -----//
@@ -28,6 +31,68 @@ export async function dateUpdate() {
   });
   return dates;
 }
+
+//---------------------------------------------//
+//               Pie chart                     //
+//---------------------------------------------//
+// 'piechart' = constant declared from class ChartPieSeries in layers.ts
+interface pieChartDataType {
+  piechart: any;
+  qChart: any;
+  layer: any;
+  statusList: any;
+  statusField: any;
+  statisticField: any;
+  statisticType: "sum" | "count";
+}
+export async function pieChartData({
+  piechart,
+  qChart,
+  layer,
+  statusList,
+  statusField,
+  statisticField,
+  statisticType,
+}: pieChartDataType) {
+  piechart.qChart = qChart.queryExpression();
+  piechart.layer = layer;
+  piechart.statusList = statusList;
+  piechart.statusField = statusField;
+  piechart.statisticField = statisticField;
+  piechart.statisticType = statisticType;
+
+  return await piechart.chartDataPieSeries();
+}
+
+interface fieldStatisticType {
+  qChart: any;
+  layer: any;
+  statisticField: any;
+  statisticType: statisticsType;
+}
+
+export async function fieldStatistic({
+  qChart,
+  layer,
+  statisticField,
+  statisticType,
+}: fieldStatisticType) {
+  const statsCollect = new StatisticDefinition({
+    onStatisticField: statisticField,
+    outStatisticFieldName: "statsCollect",
+    statisticType: statisticType,
+  });
+
+  //--- Query
+  const query = new Query();
+  query.outStatistics = [statsCollect];
+  query.where = qChart;
+
+  return layer?.queryFeatures(query).then((response: any) => {
+    return response.features[0].attributes.statsCollect;
+  });
+}
+
 //----------------------------------------------//
 //                 Others                       //
 //----------------------------------------------//
