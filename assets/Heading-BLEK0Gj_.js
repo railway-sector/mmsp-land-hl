@@ -1,1 +1,0 @@
-import{ec as l,ed as s,ee as c,ef as o}from"./index-BsIhQCI4.js";function f({level:e,class:n,...t},i){const r=a(e);return l(`h${r}`,{...t,"aria-level":String(r),class:s(c.heading,n),role:"heading"},i)}function a(e){return o(Math.ceil(e),1,6)}function h(e,n=1){return a(e+n)}export{f as i,h as l};
