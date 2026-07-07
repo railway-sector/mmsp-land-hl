@@ -150,7 +150,9 @@ const ChartLot = () => {
         perc_tobe_ho: perc_tob_ho,
       };
     },
-    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
   const chartData = data?.chartData || [];
   const totaln = data?.lotNumber || 0;
