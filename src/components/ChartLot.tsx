@@ -28,7 +28,6 @@ import {
   valueLabelColor,
 } from "../uniqueValues";
 import { ArcgisMap } from "@arcgis/map-components/dist/components/arcgis-map";
-import { chartRenderer } from "../chartRenderer";
 import { useQuery } from "@tanstack/react-query";
 import { locationKeys } from "../interfaceKeys";
 import type { SelectedLocation, ChartResponse } from "../interfaceKeys";
@@ -39,6 +38,7 @@ import {
   rootSetter,
   seriesSetter,
 } from "../chartSetter";
+import ChartPieSeriesRender from "chart-pie-series-render";
 
 const ChartLot = () => {
   const arcgisMap = document.querySelector("arcgis-map") as ArcgisMap;
@@ -71,7 +71,7 @@ const ChartLot = () => {
   const queryList = [cpackage, landType, landSection];
 
   //--- 2. Streamlined Data Fetching with useQuery
-  const { data } = useQuery<ChartResponse | any>({
+  const { data, isLoading } = useQuery<ChartResponse | any>({
     queryKey: [queryList, lotStatusField, lotLayer],
     queryFn: async () => {
       queryc_lot.qValues = queryList;
@@ -189,7 +189,7 @@ const ChartLot = () => {
       categoryField: "category",
       valueField: "value",
       legendValueText: "{valuePercentTotal.formatNumber('#.')}% ({value})",
-      radius: 45,
+      radius: 40,
       innerRadius: 28,
       scale: 1,
     });
@@ -204,26 +204,28 @@ const ChartLot = () => {
       x: 50,
     });
     legendRef.current = legend;
+    legend.setAll({ marginBottom: 50 });
     legend.data.setAll(pieSeries.dataItems);
 
-    chartRenderer({
-      chart: chart,
-      pieSeries: pieSeries,
-      legend: legend,
-      root: root,
-      qChart: queryc_lot,
-      status_field: lotStatusField,
-      arcgisMap: arcgisMap,
-      updateChartPanelwidth: setChartPanelwidth,
-      data: chartData,
-      pieSeriesScale: new_pieSeriesScale,
-      pieInnerLabel: "TOTAL LOTS",
-      pieInnerLabelFontSize: new_pieInnerLabelFontSize,
-      pieInnerValueFontSize: new_pieInnerValueFontSize,
-      layer: lotLayer,
-      statusArray: statusLotQuery,
-      background_color_switch: false,
-    });
+    const crender = new ChartPieSeriesRender(
+      chart,
+      pieSeries,
+      legend,
+      root,
+      queryc_lot,
+      undefined,
+      lotStatusField,
+      arcgisMap?.view,
+      setChartPanelwidth,
+      chartData,
+      new_pieSeriesScale,
+      "PRIVATE LOTS",
+      new_pieInnerLabelFontSize,
+      new_pieInnerValueFontSize,
+      lotLayer,
+      statusLotQuery,
+    );
+    crender.chartDataRenderer();
     return () => {
       root.dispose();
     };
@@ -235,161 +237,164 @@ const ChartLot = () => {
   });
 
   return (
-    <>
-      <calcite-panel
-        scale="s"
-        slot="panel-end"
-        collapsible
-        heading={panelHeader}
-        // headingLevel={3}
-        id="chart-panel"
-        collapseDirection="up"
+    <calcite-panel
+      scale="s"
+      slot="panel-end"
+      collapsible
+      heading={panelHeader}
+      // headingLevel={3}
+      id="chart-panel"
+      collapseDirection="up"
+      style={{
+        "--calcite-panel-heading-text-color": primaryLabelColor,
+        "--calcite-panel-background-color": "#2b2b2b",
+        borderStyle: "solid",
+        borderRightWidth: 5,
+        borderLeftWidth: 5,
+        borderBottomWidth: 5,
+        borderColor: "#555555",
+        width: panelWidth,
+        overflowY: "auto",
+        overflowX: "hidden",
+        display: "block", // without adding display, background will not disappear.
+        scrollbarWidth: "none",
+      }}
+      onClick={handlePanelCollapse}
+    >
+      <div
         style={{
-          "--calcite-panel-heading-text-color": primaryLabelColor,
-          "--calcite-panel-background-color": "#2b2b2b",
-          borderStyle: "solid",
-          borderRightWidth: 5,
-          borderLeftWidth: 5,
-          borderBottomWidth: 5,
-          borderColor: "#555555",
-          width: panelWidth,
-          overflowY: "auto",
-          display: "block", // without adding display, background will not disappear.
+          display: "flex",
+          justifyContent: "space-between",
+          padding: "10px",
         }}
-        onClick={handlePanelCollapse}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            padding: "10px",
-          }}
-        >
-          <img
-            src="https://EijiGorilla.github.io/Symbols/Land_logo.png"
-            alt="Land Logo"
-            height={`${new_imageSize}%`}
-            width={`${new_imageSize}%`}
-            style={{ marginTop: "15px", marginLeft: "20px" }}
-          />
-          <dl style={{ alignItems: "center" }}>
-            <dt
-              style={{
-                color: primaryLabelColor,
-                fontSize: `${new_fontSize}px`,
-              }}
-            >
-              TOTAL LOTS
-            </dt>
-            <dd
-              style={{
-                color: valueLabelColor,
-                fontSize: `${new_valueSize}px`,
-                fontWeight: "bold",
-                fontFamily: "calibri",
-                lineHeight: "1.2",
-                margin: "auto",
-              }}
-            >
-              {thousands_separators(totaln)}
-            </dd>
-          </dl>
+        <img
+          src="https://EijiGorilla.github.io/Symbols/Land_logo.png"
+          alt="Land Logo"
+          height={`${new_imageSize}%`}
+          width={`${new_imageSize}%`}
+          style={{ marginTop: "15px", marginLeft: "20px" }}
+        />
+        <dl style={{ alignItems: "center" }}>
+          <dt
+            style={{
+              color: primaryLabelColor,
+              fontSize: `${new_fontSize}px`,
+            }}
+          >
+            TOTAL LOTS
+          </dt>
+          <dd
+            style={{
+              color: valueLabelColor,
+              fontSize: `${new_valueSize}px`,
+              fontWeight: "bold",
+              fontFamily: "calibri",
+              lineHeight: "1.2",
+              margin: "auto",
+              opacity: isLoading ? 0 : 1,
+            }}
+          >
+            {thousands_separators(totaln)}
+          </dd>
+        </dl>
 
-          {/* Public Lot Number */}
-          <dl style={{ alignItems: "center", marginRight: "20px" }}>
-            <dt
-              style={{
-                color: primaryLabelColor,
-                fontSize: `${new_fontSize}px`,
-              }}
-            >
-              PUBLIC LOTS
-            </dt>
-            <dd
-              style={{
-                color: valueLabelColor,
-                fontSize: `${new_valueSize}px`,
-                fontWeight: "bold",
-                fontFamily: "calibri",
-                lineHeight: "1.2",
-                margin: "auto",
-              }}
-            >
-              {thousands_separators(publicn)}
-            </dd>
-          </dl>
-        </div>
+        {/* Public Lot Number */}
+        <dl style={{ alignItems: "center", marginRight: "20px" }}>
+          <dt
+            style={{
+              color: primaryLabelColor,
+              fontSize: `${new_fontSize}px`,
+            }}
+          >
+            PUBLIC LOTS
+          </dt>
+          <dd
+            style={{
+              color: valueLabelColor,
+              fontSize: `${new_valueSize}px`,
+              fontWeight: "bold",
+              fontFamily: "calibri",
+              lineHeight: "1.2",
+              margin: "auto",
+              opacity: isLoading ? 0 : 1,
+            }}
+          >
+            {thousands_separators(publicn)}
+          </dd>
+        </dl>
+      </div>
 
-        {/* Lot Chart */}
-        <div
-          id={chartID}
-          style={{
-            // width: "100%",
-            height: "57vh",
-            color: "white",
-            // marginBottom: "3%",
-          }}
-        ></div>
+      {/* Lot Chart */}
+      <div
+        id={chartID}
+        style={{
+          width: "100%",
+          height: "59vh",
+          color: "white",
+          opacity: isLoading ? 0 : 1,
+          // marginBottom: "3%",
+        }}
+      ></div>
 
-        {/* Handed-Over */}
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            lineHeight: "1.2",
-            padding: "0px 0px 0px 20px",
-          }}
-        >
-          <dl>
-            <dt
-              style={{
-                color: primaryLabelColor,
-                fontSize: `${new_fontSize}px`,
-              }}
-            >
-              <div>Handed Over</div>
-              <div>(GC to JV)</div>
-            </dt>
-            <dd
-              style={{
-                color: valueLabelColor,
-                fontSize: `${new_valueSize}px`,
-                fontWeight: "bold",
-                fontFamily: "calibri",
-                margin: "auto",
-              }}
-            >
-              {perc_ho}% ({thousands_separators(total_ho)})
-            </dd>
-          </dl>
+      {/* Handed-Over */}
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+          lineHeight: "1.2",
+          padding: "0px 0px 0px 20px",
+        }}
+      >
+        <dl>
+          <dt
+            style={{
+              color: primaryLabelColor,
+              fontSize: `${new_fontSize}px`,
+            }}
+          >
+            <div>Handed Over</div>
+            <div>(GC to JV)</div>
+          </dt>
+          <dd
+            style={{
+              color: valueLabelColor,
+              fontSize: `${new_valueSize}px`,
+              fontWeight: "bold",
+              fontFamily: "calibri",
+              margin: "auto",
+            }}
+          >
+            {perc_ho}% ({thousands_separators(total_ho)})
+          </dd>
+        </dl>
 
-          <dl>
-            <dt
-              style={{
-                color: primaryLabelColor,
-                fontSize: `${new_fontSize}px`,
-                marginRight: "30px",
-              }}
-            >
-              <div>To be Handed Over</div>
-              <div>(to JV)</div>
-            </dt>
-            <dd
-              style={{
-                color: valueLabelColor,
-                fontSize: `${new_valueSize}px`,
-                fontWeight: "bold",
-                fontFamily: "calibri",
-                margin: "auto",
-              }}
-            >
-              {perce_tobe_ho}% ({thousands_separators(total_tobe_ho)})
-            </dd>
-          </dl>
-        </div>
-      </calcite-panel>
-    </>
+        <dl>
+          <dt
+            style={{
+              color: primaryLabelColor,
+              fontSize: `${new_fontSize}px`,
+              marginRight: "30px",
+            }}
+          >
+            <div>To be Handed Over</div>
+            <div>(to JV)</div>
+          </dt>
+          <dd
+            style={{
+              color: valueLabelColor,
+              fontSize: `${new_valueSize}px`,
+              fontWeight: "bold",
+              fontFamily: "calibri",
+              margin: "auto",
+            }}
+          >
+            {perce_tobe_ho}% ({thousands_separators(total_tobe_ho)})
+          </dd>
+        </dl>
+      </div>
+    </calcite-panel>
   );
 }; // End of lotChartgs
 
