@@ -11,9 +11,20 @@ import "@arcgis/map-components/components/arcgis-time-slider";
 import { defineActions } from "../uniqueValues";
 
 function ActionPanel() {
+  const shellPanel: any = document.getElementById("left-shell-panel");
+
+  //-----------------------------------------
+  //   Define active & next widget states
+  //-----------------------------------------
   const [activeWidget, setActiveWidget] = useState(null);
   const [nextWidget, setNextWidget] = useState(null);
-  const shellPanel: any = document.getElementById("left-shell-panel");
+
+  //--- Click action handler function for active & next widget
+  const handleActionClick = (event: any) => {
+    const id = event.target.id;
+    setNextWidget(id);
+    setActiveWidget(nextWidget === activeWidget ? null : nextWidget);
+  };
 
   if (activeWidget) {
     const actionActiveWidget: any = document.querySelector(
@@ -55,10 +66,7 @@ function ActionPanel() {
             icon="layers"
             text="layers"
             id="layers"
-            onClick={(event: any) => {
-              setNextWidget(event.target.id);
-              setActiveWidget(nextWidget === activeWidget ? null : nextWidget);
-            }}
+            onClick={handleActionClick}
           ></calcite-action>
 
           <calcite-action
@@ -66,32 +74,15 @@ function ActionPanel() {
             icon="basemap"
             text="basemaps"
             id="basemaps"
-            onClick={(event: any) => {
-              setNextWidget(event.target.id);
-              setActiveWidget(nextWidget === activeWidget ? null : nextWidget);
-            }}
+            onClick={handleActionClick}
           ></calcite-action>
-
-          {/*<CalciteAction
-            data-action-id="charts"
-            icon="graph-time-series"
-            text="Progress Chart"
-            id="charts"
-            onClick={(event) => {
-              setNextWidget(event.target.id);
-              setActiveWidget(nextWidget === activeWidget ? null : nextWidget);
-            }}
-          ></CalciteAction>*/}
 
           <calcite-action
             data-action-id="information"
             icon="information"
             text="Information"
             id="information"
-            onClick={(event: any) => {
-              setNextWidget(event.target.id);
-              setActiveWidget(nextWidget === activeWidget ? null : nextWidget);
-            }}
+            onClick={handleActionClick}
           ></calcite-action>
         </calcite-action-bar>
 
@@ -100,7 +91,6 @@ function ActionPanel() {
             referenceElement="arcgis-map"
             selectionMode="multiple"
             visibilityAppearance="checkbox"
-            // show-collapse-button
             show-filter
             filter-placeholder="Filter layers"
             listItemCreatedFunction={defineActions}
@@ -112,13 +102,6 @@ function ActionPanel() {
         </calcite-panel>
 
         <calcite-panel data-panel-id="timeslider" hidden></calcite-panel>
-
-        {/* <CalcitePanel
-          class="timeSeries-panel"
-          height-scale="l"
-          data-panel-id="charts"
-          hidden
-        ></CalcitePanel> */}
 
         <calcite-panel heading="Description" data-panel-id="information" hidden>
           {nextWidget === "information" ? (
@@ -139,7 +122,6 @@ function ActionPanel() {
             </div>
           ) : (
             <div className="informationDiv" hidden></div>
-            // <div className="informationDiv" hidden></div>
           )}
         </calcite-panel>
       </calcite-shell-panel>

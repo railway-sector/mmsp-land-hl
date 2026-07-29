@@ -1,11 +1,10 @@
-import { useMemo, useState } from "react";
+import { use, useMemo, useState } from "react";
 import Select from "react-select";
 import "../index.css";
 import GenerateDropdownData from "dropdown-pkg-arcgis";
 import { lotLayer } from "../layers";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { locationKeys } from "../interfaceKeys";
-import type { SelectedLocation } from "../interfaceKeys";
+import { MyContext } from "../contexts/MyContext";
+import { useQuery } from "@tanstack/react-query";
 
 const theme = {
   bg: "#2b2b2b",
@@ -66,11 +65,11 @@ const customStyles = {
 };
 
 export default function DropdownData() {
-  const queryClient = useQueryClient();
+  const { updateCpackage, updateLandtype, updateLandsection } = use(MyContext);
 
-  const [cPackageSelected, setCPackageSelected] = useState<null | any>(null);
-  const [landTypeSelected, setLandTypeSelected] = useState<null | any>(null);
-  const [landSection, setLandSection] = useState<null | any>(null);
+  const [cpSelected, setCpSelected] = useState<null | any>(null);
+  const [typeSelected, setTypeSelected] = useState<null | any>(null);
+  const [sectionSelected, setSectionSelected] = useState<null | any>(null);
 
   const { data: cpackageList } = useQuery<any>({
     queryKey: ["dropdownData"], // Do not add lotLayer as a dependency. The dropdown list will not be updated properly.
@@ -81,58 +80,41 @@ export default function DropdownData() {
       );
       return await dropdownData.dropDownQuery();
     },
-    staleTime: Infinity, // never refetch in the backround. If not Inifity, it will refetch.
+    staleTime: Infinity,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
 
   //--- Avoid returning empty objects when the component is re-rendered.
-  const landTypeList = useMemo(
-    () => cPackageSelected?.field2 ?? [],
-    [cPackageSelected],
-  );
-
+  const landTypeList = useMemo(() => cpSelected?.field2 ?? [], [cpSelected]);
   const landSectionList = useMemo(
-    () => landTypeSelected?.field3 ?? [],
-    [landTypeSelected],
+    () => typeSelected?.field3 ?? [],
+    [typeSelected],
   );
 
-  //--- Function to instantly update the global cache
-  function setSelectedLocation(patch: Partial<SelectedLocation>) {
-    queryClient.setQueryData<SelectedLocation>(
-      locationKeys.selected,
-      (prev) => ({
-        cpackage: prev?.cpackage ?? null,
-        landType: prev?.landType ?? null,
-        landSection: prev?.landSection ?? null,
-        ...patch,
-      }),
-    );
-  }
-
-  // handle change event of the Municipality dropdown
-  const handleContractPackageChange = (obj: any) => {
-    setSelectedLocation({
-      cpackage: obj?.field1 ?? null,
-      landType: null,
-      landSection: null,
-    });
-    setCPackageSelected(obj);
-    setLandTypeSelected(null);
-    setLandSection(null);
+  //--- Update contract package
+  const handleCpackageChange = (obj: any) => {
+    updateCpackage(obj?.field1 ?? null);
+    updateLandtype(null);
+    updateLandsection(null);
+    setCpSelected(obj);
+    setTypeSelected(null);
+    setSectionSelected(null);
   };
 
-  // handle change event of the barangay dropdownff
-  const handleLandTypeChange = (obj: any) => {
-    setSelectedLocation({ landType: obj?.name ?? null, landSection: null });
-    setLandTypeSelected(obj);
-    setLandSection(null);
+  //--- Update Land Type
+  const handleLandtypeChange = (obj: any) => {
+    updateLandtype(obj?.name ?? null);
+    updateLandsection(null);
+    setTypeSelected(obj);
+    setSectionSelected(null);
   };
 
-  const handleLandSectionChange = (obj: any) => {
-    setSelectedLocation({ landSection: obj?.name ?? null });
-    setLandSection(obj);
+  //--- Update Barangay
+  const handleLandsectionChange = (obj: any) => {
+    updateLandsection(obj?.name ?? null);
+    setSectionSelected(obj);
   };
 
   return (
@@ -141,14 +123,15 @@ export default function DropdownData() {
         display: "flex",
         flexDirection: "row",
         margin: "auto",
-        gap: "12px",
+        gap: "7px",
+        marginRight: "15%",
       }}
     >
       <Select
         placeholder="Select CP"
-        value={cPackageSelected}
+        value={cpSelected}
         options={cpackageList && cpackageList}
-        onChange={handleContractPackageChange}
+        onChange={handleCpackageChange}
         getOptionLabel={(x: any) => x.field1}
         isClearable
         styles={customStyles}
@@ -156,9 +139,9 @@ export default function DropdownData() {
       <br />
       <Select
         placeholder="Select Land Type"
-        value={landTypeSelected}
+        value={typeSelected}
         options={landTypeList && landTypeList}
-        onChange={handleLandTypeChange}
+        onChange={handleLandtypeChange}
         getOptionLabel={(x: any) => x.name}
         isClearable
         styles={customStyles}
@@ -166,9 +149,9 @@ export default function DropdownData() {
       <br />
       <Select
         placeholder="Select Area"
-        value={landSection}
+        value={sectionSelected}
         options={landSectionList && landSectionList}
-        onChange={handleLandSectionChange}
+        onChange={handleLandsectionChange}
         getOptionLabel={(x: any) => x.name}
         isClearable
         styles={customStyles}

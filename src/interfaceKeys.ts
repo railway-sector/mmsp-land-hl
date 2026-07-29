@@ -43,3 +43,5 @@ export interface BkColorSwitch {
 export const bkColorKeys = {
   selected: ["selectedBkColor"] as const,
 };
+
+export type statisticsType = "count" | "sum";
