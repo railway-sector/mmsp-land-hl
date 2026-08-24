@@ -72,22 +72,22 @@ export async function pieChartData({
 }
 
 //--- Separate calculation
-interface fieldStatisticType {
-  qChart: any;
+interface FieldStatisticType {
+  where: any;
   layer: any;
   statisticField: any;
   statisticType: statisticsType;
 }
 
 export async function fieldStatistic({
-  qChart,
+  where,
   layer,
   statisticField,
   statisticType,
-}: fieldStatisticType) {
+}: FieldStatisticType) {
   //--- Query
   const query = new Query({
-    where: qChart,
+    where: where,
     outStatistics: [
       new StatisticDefinition({
         onStatisticField: statisticField,
@@ -97,9 +97,8 @@ export async function fieldStatistic({
     ],
   });
 
-  return layer?.queryFeatures(query).then((response: any) => {
-    return response.features[0].attributes.statsCollect;
-  });
+  const response = await layer?.queryFeatures(query);
+  return response.features[0].attributes.statsCollect;
 }
 
 //--- Chart Render helper function

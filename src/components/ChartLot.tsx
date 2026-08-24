@@ -66,7 +66,7 @@ const ChartLot = () => {
   const qV = [cpackage, landtype, landsection];
   const qF = [cp_f, lot_type_f, lot_section_f];
   const queryc = makeQuery(qV, qF);
-  const queryc2 = makeQuery(qV, qF, `${lot_status_f} IS NULL`);
+  const queryc2 = makeQuery(qV, qF, `StatusNVS3 IS NULL`);
 
   //--- 2. Streamlined Data Fetching with useQuery
   const { data, isLoading } = useQuery<ChartResponse | any>({
@@ -98,23 +98,23 @@ const ChartLot = () => {
 
           //--- total number of lots (public + private)
           fieldStatistic({
-            qChart: queryc.queryExpression(),
+            where: queryc.queryExpression(),
             layer: lotLayer,
-            statisticField: lot_id_f,
+            statisticField: `${lot_id_f}`,
             statisticType: "count",
           }),
 
           //--- total number of public lots
           fieldStatistic({
-            qChart: queryc2.queryExpression(),
-            layer: publicLotLayer,
-            statisticField: lot_id_f,
+            where: queryc2.queryExpression(),
+            layer: lotLayer,
+            statisticField: `${lot_id_f}`,
             statisticType: "count",
           }),
 
           //--- Number of handed-over lots (GC to JV)
           fieldStatistic({
-            qChart: queryc.queryExpression(),
+            where: queryc.queryExpression(),
             layer: lotLayer,
             statisticField: lot_ho_f,
             statisticType: "sum",
@@ -122,7 +122,7 @@ const ChartLot = () => {
 
           //--- Number of To-be-handed-over lots (to JV)
           fieldStatistic({
-            qChart: queryc.queryExpression(),
+            where: queryc.queryExpression(),
             layer: lotLayer,
             statisticField: lot_xho_f,
             statisticType: "sum",
@@ -162,7 +162,6 @@ const ChartLot = () => {
   // Chart Resize parameters
   const new_fontSize = chartPanelwidth / 28;
   const new_valueSize = chartPanelwidth / 16;
-  const new_imageSize = chartPanelwidth * 0.026;
   const new_pieSeriesScale = 220;
   const new_pieInnerValueFontSize = "1.1rem";
   const new_pieInnerLabelFontSize = "0.45em";
@@ -263,17 +262,11 @@ const ChartLot = () => {
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
-          padding: "10px",
+          gap: "65px",
+          marginTop: "2%",
+          justifyContent: "center",
         }}
       >
-        <img
-          src="https://eijigorilla.github.io/Symbols/Land_Acquisition/Land_Logo2.png"
-          alt="Land Logo"
-          height={`${new_imageSize}%`}
-          width={`${new_imageSize}%`}
-          style={{ marginTop: "15px", marginLeft: "20px" }}
-        />
         <dl style={{ alignItems: "center" }}>
           <dt style={{ color: labelColor, fontSize: `${new_fontSize}px` }}>
             TOTAL LOTS

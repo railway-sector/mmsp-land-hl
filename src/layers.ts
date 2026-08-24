@@ -168,9 +168,8 @@ export const oas_accessRoad = new FeatureLayer({
 //----------------------------------------------//
 //--- LOT LAYER ---//
 export const lotLayer = new FeatureLayer({
-  portalItem: portalItems("0c172b82ddab44f2bb439542dd75e8ae"),
+  portalItem: portalItems("93790e8102f84713a69e562da12bb415"),
   outFields: [lot_id_f, lot_status_f],
-  layerId: 8,
   title: "Acquisition Status",
   labelingInfo: [lot_id_label],
   renderer: lot_status_renderer,
