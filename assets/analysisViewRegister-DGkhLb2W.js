@@ -1,0 +1,1 @@
+import{bj as f,cL as a}from"./index-Cmm80kEu.js";function d(){const r=new WeakMap,c=(e,o)=>{const t=r.get(e);t&&(t.delete(o),t.size===0&&r.delete(e))};return{register:(e,o)=>(f(r,e,()=>new Set).add(o),a(()=>c(e,o))),forEveryOther(e,o,t){const n=r.get(e);if(n)for(const s of n)s!==o&&t(s)}}}export{d as o};
