@@ -1,80 +1,85 @@
-import DropdownData from "./DropdownContext";
-import { useQuery } from "@tanstack/react-query";
-import { dateUpdate } from "../query";
+import { useEffect, useState } from "react";
+import Dropdown from "./Dropdown";
+import { DateTable } from "../layers";
 
-function Header() {
-  const { data } = useQuery<any>({
-    queryKey: ["As_Of_Date"],
-    queryFn: () => dateUpdate("Land Acquisition HL"),
-    staleTime: Infinity,
+// Formats a Date, e.g. "July 8, 2026"
+function formatDate(date: Date) {
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
   });
-  const asofdate = data ?? "";
-
-  return (
-    <>
-      <header
-        slot="header"
-        id="header-title"
-        style={{
-          display: "flex",
-          height: "70px",
-          padding: "0 1rem",
-          borderStyle: "solid",
-          borderRightWidth: 5,
-          borderLeftWidth: 5,
-          borderBottomWidth: 4,
-          borderTopWidth: 5,
-          borderColor: "#555555",
-        }}
-      >
-        <img
-          src="https://EijiGorilla.github.io/Symbols/Projec_Logo/DOTr_Logo_v2.png"
-          alt="DOTr Logo"
-          height={"55px"}
-          width={"55px"}
-          style={{ marginBottom: "auto", marginTop: "auto" }}
-        />
-        <b
-          style={{
-            color: "white",
-            marginLeft: "1rem",
-            fontSize: "2.6vh",
-            marginTop: "auto",
-            marginBottom: "auto",
-          }}
-        >
-          MMSP LAND (HL)
-        </b>
-        <div
-          style={{
-            width: "200px",
-            height: "20px",
-            marginTop: "auto",
-            marginLeft: "auto",
-            marginBottom: "3px",
-          }}
-        >
-          {!asofdate ? "" : "As of " + asofdate}
-        </div>
-
-        {/* Dropdown component */}
-        <DropdownData />
-
-        <img
-          src="https://EijiGorilla.github.io/Symbols/Projec_Logo/MMSP.png"
-          alt="GCR Logo"
-          height={"50px"}
-          width={"75px"}
-          style={{
-            marginBottom: "auto",
-            marginTop: "auto",
-            marginLeft: "auto",
-            marginRight: "1rem",
-          }}
-        />
-      </header>
-    </>
-  );
 }
 
-export default Header;
+// Static styles — defined once outside the component so they aren't
+// recreated on every render.
+const styles = {
+  header: {
+    display: "grid",
+    gridTemplateColumns: "1fr auto 1fr",
+    alignItems: "center",
+    padding: "12px 20px",
+    backgroundColor: "#1c1c1c",
+    borderBottom: "1px solid #3a3a3a",
+    color: "#ffffff",
+  },
+  title: {
+    fontSize: "15px",
+    fontWeight: 600,
+    letterSpacing: "0.02em",
+    whiteSpace: "nowrap",
+  },
+  date: {
+    fontSize: "13px",
+    color: "#9a9a9a",
+    whiteSpace: "nowrap",
+    justifySelf: "end",
+  },
+} as const;
+
+export default function Header() {
+  // Empty until the portal table responds — there's no client-side
+  // fallback value here since the date now comes from the table, not
+  // the device clock.
+  const [displayDate, setDisplayDate] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadDate() {
+      try {
+        await DateTable.load();
+
+        const result = await DateTable.queryFeatures({
+          where: "category = 'Land Acquisition HL'",
+          outFields: ["date"],
+          num: 1,
+        });
+
+        const rawDate = result.features[0]?.attributes?.date;
+        if (!cancelled && rawDate) {
+          setDisplayDate(formatDate(new Date(rawDate)));
+        }
+      } catch (error) {
+        console.error("Failed to load Land Acquisition HL date:", error);
+      }
+    }
+
+    loadDate();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    // 3-column layout: title (left) | Dropdown (center) | date (right)
+    <header slot="header" style={styles.header}>
+      <span style={styles.title}>MMSP Land (HL)</span>
+
+      <Dropdown />
+
+      <span style={styles.date}>{displayDate}</span>
+    </header>
+  );
+}
