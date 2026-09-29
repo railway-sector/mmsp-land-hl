@@ -1,0 +1,1 @@
+import{ha as o}from"./index-CS_iAnmT.js";import{n as c}from"./OperatorSimplifyOGC-CUC0ym60.js";const e=new c;function f(n,r,t){return e.execute(n,r,t,null)}function l(n,r,t){const u=e.executeMany(new o(n),r,t,null);return Array.from(u)}function m(n,r,t,u){return e.isSimple(n,r,t,u,null)}function p(){return e.supportsCurves()}export{m as o,p as s,f as t,l as u};

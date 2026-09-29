@@ -1,0 +1,1 @@
+import{fo as t}from"./index-CS_iAnmT.js";function n(e){if(typeof e=="string")return e.toLowerCase();if("name"in e)return e.name.toLowerCase();if(typeof e.value!="string")throw new t("InvalidIdentifier",null);return e.value.toLowerCase()}const r=Object.freeze({aborted:!1});export{n as r,r as t};

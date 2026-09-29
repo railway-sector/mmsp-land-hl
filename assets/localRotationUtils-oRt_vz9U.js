@@ -1,0 +1,1 @@
+import{dB as u}from"./index-CS_iAnmT.js";function M(o,r,n){const s=Math.sin(o),c=Math.cos(o),i=Math.sin(r),h=Math.cos(r),t=n;return t[0]=-s,t[4]=-i*c,t[8]=h*c,t[12]=0,t[1]=c,t[5]=-i*s,t[9]=h*s,t[13]=0,t[2]=0,t[6]=h,t[10]=i,t[14]=0,t[3]=0,t[7]=0,t[11]=0,t[15]=1,t}function e(o,r,n){return M(o,r,n),u(n,n),n}export{M as n,e as o};
