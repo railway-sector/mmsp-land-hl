@@ -1,0 +1,1 @@
+import{cd as h,ce as s,cf as e,cg as m,ch as f}from"./index-s1p-teVg.js";import{t as u}from"./densificationConstants-Dhma1KnX.js";function w(t,n,i,o){const{height:c,width:r}=o??g(t),a=Math.min(r/n,c/i)*u();return h(t,{maxDeviation:a})}function g(t){const n=s(e(),t);return{width:f(n),height:m(n)}}export{w as n};
