@@ -58,7 +58,7 @@ export const stationBoxStatuses = [
 export const pteHandoverSubteLotsStatuses = [
   { code: "ADDITIONAL FOR HANDOVER TO GC/JV",         label: "Additional for Handover to GC/JV",        color: "#FFFF00" },
   { code: "HANDED OVER TO GC/JV",                     label: "Handed Over to GC/JV",                    color: "#47D359" },
-  { code: "FOR SIGNATURE AND NOTARIZATION  OF PTE",   label: "For Signature and Notarization of PTE",   color: "#F1A983" },
+  { code: "Lots with Pending Handover",               label: "Lots with Pending Handover",              color: "#c42615" },
 ];
 
 // ============================================================
@@ -263,7 +263,7 @@ export const pteHandoverSubteLotsLayer = new FeatureLayer({
   },
   outFields: [pteHandoverSubteLotsField, "CN", "StatusNVS3"],
   layerId: 31,
-  title: "PTE Handover for Subterranean Lots",
+  title: "PTE/ CNO Handover for Subterranean Lots",
   opacity: 0.9,
   renderer: pteHandoverSubteLotsRenderer,
   definitionExpression: `${pteHandoverSubteLotsField} IS NOT NULL`,
