@@ -18,6 +18,7 @@ export const DEFAULT_HANDED_OVER_FIELD = "HandedOVer";
 export const DEFAULT_NOT_YET_FIELD = "not_yet";
 export const oasAffectedStructuresStatusField = "REMARKS";
 export const stationBoxStatusField = "Layer";
+export const pteHandoverSubteLotsField = "PTE_Handover_for_SubteLots";
 
 // ============================================================
 // STATUS DEFINITIONS
@@ -51,6 +52,15 @@ export const stationBoxStatuses = [
   { code: "NATM",                   label: "NATM",                   color: "#8c8c8c" },
 ];
 
+// code must match PTE_Handover_for_SubteLots' exact stored text
+// (case-sensitive, including the double space before "OF PTE").
+// Colors are placeholders — will be finalized later.
+export const pteHandoverSubteLotsStatuses = [
+  { code: "ADDITIONAL FOR HANDOVER TO GC/JV",         label: "Additional for Handover to GC/JV",        color: "#FFFF00" },
+  { code: "HANDED OVER TO GC/JV",                     label: "Handed Over to GC/JV",                    color: "#47D359" },
+  { code: "FOR SIGNATURE AND NOTARIZATION  OF PTE",   label: "For Signature and Notarization of PTE",   color: "#F1A983" },
+];
+
 // ============================================================
 // RENDERERS
 // ============================================================
@@ -74,6 +84,18 @@ const publicLotRenderer = new SimpleRenderer({
     color: "#d9d9d9",
     outline: { color: "#d9d9d9", width: 0.5 },
   }),
+});
+
+const pteHandoverSubteLotsRenderer = new UniqueValueRenderer({
+  field: pteHandoverSubteLotsField,
+  uniqueValueInfos: pteHandoverSubteLotsStatuses.map(({ code, label, color }) => ({
+    value: code,
+    label: label,
+    symbol: new SimpleFillSymbol({
+      color,
+      outline: { color: "#ffffff", width: 0.5 },
+    }),
+  })),
 });
 
 // Solid fill per REMARKS category. No hatching, so it stays visually
@@ -142,8 +164,8 @@ const lotPopupTemplate = new PopupTemplate({
 // ============================================================
 
 // Labels lot features with their "CN" field. Used by lotLayer and its
-// three derived layers below (handedOver, toBeHandedOver,
-// subterranean). Only shows once zoomed in past 1:50,000.
+// derived layers below (handedOver, toBeHandedOver, subterranean,
+// pteHandoverSubteLots). Only shows once zoomed in past 1:50,000.
 const lotCnLabelClass = new LabelClass({
   labelExpressionInfo: { expression: "$feature.CN" },
   symbol: new TextSymbol({
@@ -233,6 +255,25 @@ export const subterraneanLotsLayer = new FeatureLayer({
   visible: false,
 });
 
+// Shows only lots where PTE_Handover_for_SubteLots is not null
+export const pteHandoverSubteLotsLayer = new FeatureLayer({
+  portalItem: {
+    id: "93790e8102f84713a69e562da12bb415",
+    portal: { url: "https://gis.railway-sector.com/portal" },
+  },
+  outFields: [pteHandoverSubteLotsField, "CN", "StatusNVS3"],
+  layerId: 31,
+  title: "PTE Handover for Subterranean Lots",
+  opacity: 0.9,
+  renderer: pteHandoverSubteLotsRenderer,
+  definitionExpression: `${pteHandoverSubteLotsField} IS NOT NULL`,
+  popupEnabled: false,
+  labelingInfo: [lotCnLabelClass],
+  labelsVisible: true,  
+  listMode: "show",
+  visible: false,
+});
+
 export const publicLotsLayer = new FeatureLayer({
   portalItem: {
     id: "93790e8102f84713a69e562da12bb415",
@@ -253,7 +294,7 @@ export const publicLotsLayer = new FeatureLayer({
 export const landGroupLayer = new GroupLayer({
   title: "Land",
   visibilityMode: "independent",
-  layers: [lotLayer, handedOverLotsLayer, toBeHandedOverLotsLayer, subterraneanLotsLayer, publicLotsLayer],
+  layers: [lotLayer, handedOverLotsLayer, toBeHandedOverLotsLayer, subterraneanLotsLayer, pteHandoverSubteLotsLayer, publicLotsLayer],
   visible: true,
   listMode: "show",
 });
