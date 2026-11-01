@@ -1,3 +1,10 @@
+// ============================DOCUMENTATION============================
+// Author: Josiah Fontanilla
+// Description: MMSP LA (HL) smart map
+// Created Date: July 2026
+// Update: 10-31-2026  Added Screenshot and Print at the ActionBar component
+// ============================DOCUMENTATION============================
+
 import "./index.css";
 import "@esri/calcite-components/components/calcite-shell";
 import { useState, useEffect } from "react";

@@ -4,6 +4,8 @@ import "@esri/calcite-components/components/calcite-action";
 import "@esri/calcite-components/components/calcite-panel";
 import "@arcgis/map-components/components/arcgis-basemap-gallery";
 import "@arcgis/map-components/components/arcgis-layer-list";
+import ScreenshotButton from "./ScreenshotButton";
+import PrintMapButton from "./PrintMapButton";
 import { useEffect, useRef, useState } from "react";
 
 // Which side panel is open (null = none). Time slider overlays the
@@ -79,6 +81,10 @@ export default function ActionBar() {
           active={activePanel === "basemap"}
           onClick={() => togglePanel("basemap")}
         ></calcite-action>
+
+        <ScreenshotButton />
+
+        <PrintMapButton />
 
         <calcite-action
           icon="information"

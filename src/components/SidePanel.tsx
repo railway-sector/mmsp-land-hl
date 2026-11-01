@@ -60,6 +60,7 @@
             Side panel docked via slot="panel-end", 40% width.
         ---------------------------------------------------- */}
         <calcite-tabs
+          id="side-panel"
           slot="panel-end"
           layout="center"
           scale="l"
