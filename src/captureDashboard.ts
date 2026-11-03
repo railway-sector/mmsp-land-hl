@@ -1,3 +1,5 @@
+import { mapView } from "./components/MapDisplay";
+
 function download(href: string, filename: string) {
   const a = document.createElement("a");
   a.href = href;
@@ -25,13 +27,18 @@ function unionRect(elements: HTMLElement[]) {
 
 export async function captureDashboardScreen(
   targets: (HTMLElement | null)[],
-  baseName = "MMSP"
+  baseName = "MMSP",
+  hiResMap = true // set false to keep the compass/time slider on the map
 ) {
   const elements = targets.filter((el): el is HTMLElement => !!el);
   if (elements.length === 0) throw new Error("No elements to capture");
 
   const stream = await navigator.mediaDevices.getDisplayMedia({
-    video: true,
+    video: {
+      width: { ideal: 3840 },
+      height: { ideal: 2160 },
+      frameRate: { ideal: 15 },
+    },
     preferCurrentTab: true, // Chromium hint: preselects this tab
   } as DisplayMediaStreamOptions);
 
@@ -39,23 +46,64 @@ export async function captureDashboardScreen(
     const video = document.createElement("video");
     video.srcObject = stream;
     await video.play();
-    await new Promise((r) => setTimeout(r, 300)); // let the prompt close
+
+    // Early frames are heavily compressed; wait for a sharp one
+    await new Promise((r) => setTimeout(r, 1000));
 
     // Measure after the delay, in case the layout shifted
     const area = unionRect(elements);
-    const scale = video.videoWidth / window.innerWidth;
+    const videoScale = video.videoWidth / window.innerWidth;
 
-    const sx = Math.max(0, area.left * scale);
-    const sy = Math.max(0, area.top * scale);
-    const sw = Math.min(area.width * scale, video.videoWidth - sx);
-    const sh = Math.min(area.height * scale, video.videoHeight - sy);
+    const sx = Math.max(0, area.left * videoScale);
+    const sy = Math.max(0, area.top * videoScale);
+    const sw = Math.min(area.width * videoScale, video.videoWidth - sx);
+    const sh = Math.min(area.height * videoScale, video.videoHeight - sy);
+
+    // Output scale: 2x the screen capture when using the hi-res map,
+    // capped so the final image stays at a safe size
+    const mapEl = document.getElementById("mmsp-map");
+    const view = mapView.current;
+    const useHiRes = hiResMap && !!mapEl && !!view;
+    let outScale = useHiRes ? videoScale * 2 : videoScale;
+    const maxSide = 8000;
+    outScale = Math.min(
+      outScale,
+      maxSide / area.width,
+      maxSide / area.height
+    );
 
     const canvas = document.createElement("canvas");
-    canvas.width = Math.round(sw);
-    canvas.height = Math.round(sh);
-    canvas
-      .getContext("2d")!
-      .drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+    canvas.width = Math.round(area.width * outScale);
+    canvas.height = Math.round(area.height * outScale);
+
+    const ctx = canvas.getContext("2d")!;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    // 1. Everything from the screen (panels, charts, map)
+    ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+
+    // 2. Replace the map area with a sharper ArcGIS render
+    if (useHiRes && mapEl && view) {
+      const mapRect = mapEl.getBoundingClientRect();
+      const shot = await view.takeScreenshot({
+        format: "png",
+        width: Math.round(mapRect.width * outScale),
+        height: Math.round(mapRect.height * outScale),
+      });
+
+      const img = new Image();
+      img.src = shot.dataUrl;
+      await img.decode();
+
+      ctx.drawImage(
+        img,
+        Math.round((mapRect.left - area.left) * outScale),
+        Math.round((mapRect.top - area.top) * outScale),
+        Math.round(mapRect.width * outScale),
+        Math.round(mapRect.height * outScale)
+      );
+    }
 
     // Strip characters that aren't allowed in file names
     const safeName = baseName.replace(/[\\/:*?"<>|]/g, "").trim() || "MMSP";
@@ -72,7 +120,7 @@ export async function captureDashboardScreen(
           resolve();
         },
         "image/jpeg",
-        0.92
+        1.0 // maximum quality
       )
     );
   } finally {

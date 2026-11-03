@@ -20,6 +20,16 @@ export const defaultPrintOptions: PrintOptions = {
   margin: 10,
 };
 
+// Quality option -> target print resolution (dots per inch)
+const DPI_BY_QUALITY: Record<PrintOptions["resolution"], number> = {
+  1: 150, // Standard
+  2: 250, // High
+  3: 300, // Very high
+};
+
+// Safety cap on the longest side of the map render, in pixels
+const MAX_SIDE_PX = 8000;
+
 /** Local date as YYYY-MM-DD (avoids the UTC day shift of toISOString) */
 function localDateStamp() {
   const d = new Date();
@@ -46,27 +56,36 @@ export async function exportMapPdf(opts: PrintOptions) {
   // Space reserved for the title/date line
   const headerH = opts.title || opts.includeDate ? 8 : 0;
 
-  // Printable area for the map
+  // Printable area for the map (mm)
   const printW = pageW - m * 2;
   const printH = pageH - m * 2 - headerH;
+  const targetRatio = printW / printH;
 
-  // Take the full map at the chosen resolution
+  // The part of the on-screen map (in CSS pixels) that will be printed
+  let cropCssW = view.width;
+  let cropCssH = view.height;
+  if (view.width / view.height > targetRatio) {
+    cropCssW = view.height * targetRatio; // map too wide: trim left/right
+  } else {
+    cropCssH = view.width / targetRatio; // map too tall: trim top/bottom
+  }
+
+  // Render scale so the printed area reaches the target DPI
+  const dpi = DPI_BY_QUALITY[opts.resolution];
+  const neededPxW = (printW / 25.4) * dpi;
+  let k = neededPxW / cropCssW;
+  k = Math.min(k, MAX_SIDE_PX / Math.max(view.width, view.height));
+
   const shot = await view.takeScreenshot({
     format: "png",
-    width: view.width * opts.resolution,
-    height: view.height * opts.resolution,
+    width: Math.round(view.width * k),
+    height: Math.round(view.height * k),
   });
   const { width, height } = shot.data;
 
-  // Centered crop matching the printable area's aspect ratio
-  const targetRatio = printW / printH;
-  let cropW = width;
-  let cropH = height;
-  if (width / height > targetRatio) {
-    cropW = height * targetRatio; // map too wide: trim left/right
-  } else {
-    cropH = width / targetRatio; // map too tall: trim top/bottom
-  }
+  // Centered crop, in render pixels
+  const cropW = (cropCssW / view.width) * width;
+  const cropH = (cropCssH / view.height) * height;
   const sx = (width - cropW) / 2;
   const sy = (height - cropH) / 2;
 
@@ -77,10 +96,10 @@ export async function exportMapPdf(opts: PrintOptions) {
   const canvas = document.createElement("canvas");
   canvas.width = Math.round(cropW);
   canvas.height = Math.round(cropH);
-  canvas
-    .getContext("2d")!
-    .drawImage(img, sx, sy, cropW, cropH, 0, 0, canvas.width, canvas.height);
-  const croppedUrl = canvas.toDataURL("image/jpeg", 0.95);
+  const ctx = canvas.getContext("2d")!;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(img, sx, sy, cropW, cropH, 0, 0, canvas.width, canvas.height);
+  const croppedUrl = canvas.toDataURL("image/jpeg", 0.98);
 
   // Title and date sit inside the top of the printable area
   if (opts.title) {
